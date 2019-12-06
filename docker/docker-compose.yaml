@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  wildland-model:
+    container_name: wildland-model
+    build: .
+    image: wildland-model
+    volumes:
+      - ..:/wildland:ro
+      - ../output:/wildland/output:rw
