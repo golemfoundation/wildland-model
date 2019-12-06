@@ -39,3 +39,6 @@ def golem_foundation_init():
 
 def golem_foundation_dir_submit_key (wlm_actor_key):
     wlm_actor_golem_dir.add_uid_container (wlm_actor_key)
+
+def golem_foundation_dir_key ():
+    return wlm_actor_golem_dir
