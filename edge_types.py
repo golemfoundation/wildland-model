@@ -4,7 +4,7 @@ class EdgeType:
     provided_by = 'provided by'
     dir_at = 'directory at'
     stored_at = 'stored at'
-    refers = 'refers to'
+    refers = 'created from'
     assigned = 'assigned'
     content = 'content'
     points = 'points' # TODO: dup of refers?
