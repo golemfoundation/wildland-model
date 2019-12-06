@@ -36,6 +36,9 @@ class WildlandManifest:
         for content_url in content_urls:
             self.add_content (content_url)
 
+    def __repr__ (self):
+        return "wlm_%s" % (self.uuid)
+
     def add_path (self, path):
         verify_path (path)
         path_as_list = split_path_into_tokens (path)
@@ -93,6 +96,9 @@ class WildlandUserManifest (WildlandManifest):
         Logger.nest_down()
         g_wlgraph.add_edge (self, self.wlm_storage_directory, type=EdgeType.dir_at)
 
+    def __repr__ (self):
+        return "wlm_actor_0x%s" % (self.id)
+
     def gen_pubkey (self):
         # We would like the "pubkey hash" to persist accorss runs
         # to allow for more complex experiments :)
@@ -142,6 +148,9 @@ class WildlandStorageManifest (WildlandManifest):
         g_wlgraph.add_node (self)
         g_wlgraph.add_edge (wlm_parent, self, type=EdgeType.assigned)
         g_wlgraph.add_edge (self, self.bknd_storage_backend, type=EdgeType.refers)
+
+    def __repr__ (self):
+        return "wlm_storage_%s" % (self.uuid)
 
     def update_parent (self, wlm_parent):
         prev_parent = self.wlm_parent

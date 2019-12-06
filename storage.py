@@ -30,12 +30,15 @@ class BackendStorage:
         # A node respresenting mounted fs tree (not a Container)
         self.ns = NameSpace (self, g_wlgraph)
 
+    def __repr__ (self):
+        return "bknd_storage_%s-%s" % (self.type, self.friendly_name)
 
 class BackendStorageWildland (BackendStorage):
     """A storage implemented on top of a Wildland container. Turtles..."""
 
     def __init__ (self, uid, path):
     # def __init__ (self, backend_container):
+        self.type='wildland'
         self.backend_container = wl_resolve_recursively (uid, path)
         self.friendly_name =\
             f"{uid.id}:{path}"
@@ -52,6 +55,9 @@ class StorageDriver:
         Logger.log (f"loading storage driver: {type}")
         g_wlgraph.add_node (self)
         # g_wlgraph.add_edge ('@storage', self)
+
+    def __repr__ (self):
+        return "drv_storage_%r" % (self.type)
 
     def __hash__(self):
         # We need only one driver for each type/protocol of storage

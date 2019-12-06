@@ -99,28 +99,8 @@ def check_and_report_cycles (graph):
     cycles = list(nx.simple_cycles(graph))
     if len(cycles):
         Logger.log (f"*** WARNING *** Found {len(cycles)} cycles in graph:")
-        print (
-        """
- _
-(_|   |   |_/                  o               |
-  |   |   | __,   ,_    _  _       _  _    __, |
-  |   |   |/  |  /  |  / |/ |  |  / |/ |  /  | |
-   \_/ \_/ \_/|_/   |_/  |  |_/|_/  |  |_/\_/|/o
-                                            /|
-                                            \|  
-        """)
-
-        for c in cycles:
-            print ("  -> cycle: ", end='')
-            for n in c:
-                if isinstance (n, WildlandUserManifest):
-                    print (f"{n.id}, ", end='')
-                elif isinstance (n, WildlandManifest):
-                    print (f"{n.uuid}, ", end='')
-                elif isinstance (n, BackendStorage):
-                    print (f"{n.friendly_name}, ", end='')
-            print ("")
-        print ("{pad}".format(pad="".ljust(40,'-')))
+        Logger.log (f"-> cycles found: {cycles}")
+        # raise AssertionError
 
 import sys
 import os.path
@@ -133,7 +113,7 @@ def prep_output_dir ():
     os.mkdir (outdir)
 
 def dump_yaml_for_node (filepath, n):
-    Logger.log (f"dumping yaml for node {n.uuid}")
+    Logger.log (f"dumping yaml for node {n}")
 
     with open (filepath, "w") as stream:
         yaml.dump (n, stream)
@@ -144,7 +124,7 @@ def dump_yamls(G, dirpath):
     os.mkdir (dirpath)
     for n in list (g_wlgraph.adj):
         if isinstance (n, WildlandManifest):
-            filepath = f"{dirpath}/{n.uuid}.yaml"
+            filepath = f"{dirpath}/{n}.yaml"
             dump_yaml_for_node (filepath, n)
     Logger.nest_down()
 
