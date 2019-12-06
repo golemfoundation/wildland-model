@@ -3,11 +3,11 @@
 from bootstrap import wl_barebones_init
 from storage import BackendStorage, BackendStorageWildland
 from core import WildlandManifest, WildlandUserManifest, WildlandStorageManifest
-from reporting import dump_state
+from reporting import dump_state, prep_output_dir
 from bootstrap_golem import golem_foundation_init, golem_foundation_dir_submit_key
 
 # User-specific config, building on Golem Foundation default infrastructure
-
+prep_output_dir()
 golem_foundation_init()
 
 storage_ipfs = BackendStorage('ipfs', friendly_name="IPFS")

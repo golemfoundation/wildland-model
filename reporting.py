@@ -1,5 +1,9 @@
 # Graph and other reporting functions
 
+import os
+import yaml
+from datetime import datetime
+
 from globals import *
 from logger import Logger
 from core import WildlandManifest, WildlandUserManifest, WildlandStorageManifest
@@ -118,16 +122,42 @@ def check_and_report_cycles (graph):
             print ("")
         print ("{pad}".format(pad="".ljust(40,'-')))
 
+import sys
+import os.path
+def prep_output_dir ():
+    now = datetime.now()
+    timestamp = f"{now.year}-{now.month:02}-{now.day:02}-{now.hour:02}{now.minute:02}{now.second:02}"
+    global outdir
+    outdir = f"./output/run-{timestamp}-{os.path.basename(sys.argv[0])}"
+    Logger.log (f"Preparing output dir for this run: {outdir}")
+    os.mkdir (outdir)
+
+def dump_yaml_for_node (filepath, n):
+    Logger.log (f"dumping yaml for node {n.uuid}")
+
+    with open (filepath, "w") as stream:
+        yaml.dump (n, stream)
+
+def dump_yamls(G, dirpath):
+    Logger.log (f"dumping yamls to {dirpath}")
+    Logger.nest_up()
+    os.mkdir (dirpath)
+    for n in list (g_wlgraph.adj):
+        if isinstance (n, WildlandManifest):
+            filepath = f"{dirpath}/{n.uuid}.yaml"
+            dump_yaml_for_node (filepath, n)
+    Logger.nest_down()
+
 def dump_state(description="state dump"):
     if 'iter' not in dump_state.__dict__:
         dump_state.iter = 0
 
     title = f"{description}, i = {dump_state.iter}"
-    outdir = "./output"
     filepath = f"{outdir}/G-{dump_state.iter}"
-    Logger.log (f"---> dumping state graph: {title} to {filepath}")
-    dump_graph_with_graphviz(g_wlgraph, filepath, title)
-    dump_state.iter += 1
+    Logger.log (f"---> dumping state as G-{dump_state.iter}")
+    dump_yamls (g_wlgraph, f"{outdir}/yamls-{dump_state.iter}/")
+    dump_graph_with_graphviz(nx.DiGraph(g_wlgraph), filepath, title)
+
 
     # Create a copy of the graph with signed relations removed
     # and check the resulting graph for loops:
@@ -136,3 +166,4 @@ def dump_state(description="state dump"):
         if type == EdgeType.owned_by:
             storage_graph.remove_edge(u,v)
     check_and_report_cycles (storage_graph)
+    dump_state.iter += 1
