@@ -36,6 +36,7 @@ class WildlandManifest:
         for content_url in content_urls:
             self.add_content (content_url)
 
+        self.storage_manifests = []
     def __repr__ (self):
         return "wlm_%s" % (self.uuid)
 
@@ -63,9 +64,11 @@ class WildlandManifest:
         if not isinstance (storage_backend, BackendStorage):
             raise ValueError ("Need a BackendStorage object!")
 
-        self.storage_manifest = WildlandStorageManifest (
-            bknd_storage_backend=storage_backend,
-            wlm_parent = self)
+        self.storage_manifests.append(
+            WildlandStorageManifest (
+                bknd_storage_backend=storage_backend,
+                wlm_parent = self)
+                )
 
     def update_admin (self, wlm_actor_admin):
         g_wlgraph.remove_edge (self, self.wlm_actor_admin)
