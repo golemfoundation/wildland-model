@@ -7,10 +7,10 @@ from logger import Logger
 from utils import gen_uuid
 from utils import verify_path, split_path_into_tokens
 import hashlib
-
+import yaml
 from globals import *
 
-class WildlandManifest:
+class WildlandManifest (yaml.YAMLObject):
     """A basis for a Wildland container."""
 
     def __init__ (self, wlm_actor_admin=None, content_urls=[], paths=[]):
@@ -37,6 +37,19 @@ class WildlandManifest:
             self.add_content (content_url)
 
         self.storage_manifests = []
+
+    yaml_tag = u'!wlm'
+    @classmethod
+    def to_yaml(cls, dumper, wlm):
+        dict_representation = {
+            'uuid': wlm.uuid,
+            'paths': wlm.paths,
+            'content': wlm.content,
+            'storage_manifests': repr(wlm.storage_manifests)
+        }
+        node = dumper.represent_mapping(u'!wlm', dict_representation)
+        return node
+
     def __repr__ (self):
         return "wlm_%s" % (self.uuid)
 
@@ -99,6 +112,17 @@ class WildlandUserManifest (WildlandManifest):
         Logger.nest_down()
         g_wlgraph.add_edge (self, self.wlm_storage_directory, type=EdgeType.dir_at)
 
+    yaml_tag = u'!wlm_actor'
+    @classmethod
+    def to_yaml(cls, dumper, wlm):
+        dict_representation = {
+            'uuid': wlm.uuid,
+            'pubkey': wlm.id,
+            'paths': wlm.paths
+        }
+        node = dumper.represent_mapping(u'!wlm_actor', dict_representation)
+        return node
+
     def __repr__ (self):
         return "wlm_actor_0x%s" % (self.id)
 
@@ -151,6 +175,18 @@ class WildlandStorageManifest (WildlandManifest):
         g_wlgraph.add_node (self)
         g_wlgraph.add_edge (wlm_parent, self, type=EdgeType.assigned)
         g_wlgraph.add_edge (self, self.bknd_storage_backend, type=EdgeType.refers)
+
+    yaml_tag = u'!wlm_storage'
+    @classmethod
+    def to_yaml(cls, dumper, wlm):
+        dict_representation = {
+            'uuid': wlm.uuid,
+            'paths': [],
+            'wlm_parent': wlm.wlm_parent.uuid,
+            'backend' : repr (wlm.bknd_storage_backend)
+        }
+        node = dumper.represent_mapping(u'!wlm_storage', dict_representation)
+        return node
 
     def __repr__ (self):
         return "wlm_storage_%s" % (self.uuid)
