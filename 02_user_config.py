@@ -15,7 +15,7 @@ storage_ipfs = BackendStorage('ipfs', friendly_name="IPFS")
 storage_mynas = BackendStorage('webdav', friendly_name="My NAS")
 mailbox_work = BackendStorage('imap', friendly_name="joanna@golem.foundation")
 mailbox_personal = BackendStorage('imap', friendly_name="joasia@example.com")
-
+storage_mys3 = BackendStorage('s3', friendly_name="joanna's s3 bucket")
 wlm_storage_joanna = WildlandStorageManifest(
     bknd_storage_backend = storage_mynas,
     wlm_parent = WildlandManifest()
@@ -59,6 +59,7 @@ dump_state()
 for c in some_containers:
     c.add_storage_manifest (storage_ipfs)
     c.add_storage_manifest (storage_mynas)
+    c.add_storage_manifest (storage_mys3)
 
 dump_state()
 
@@ -95,6 +96,7 @@ wlm_turtles.add_storage_manifest (storage_mynas)
 
 storage_turtles = BackendStorageWildland (wlm_actor_joanna,
     "/uids/j@g.f:/turtles")
+dump_state()
 
 wlm_achilles = WildlandManifest (wlm_actor_joanna,
     content_urls = ["file://"],
