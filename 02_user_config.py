@@ -63,6 +63,27 @@ for c in some_containers:
 dump_state()
 
 wl_resolve_recursively (wlm_actor_joanna, "/uids/j@i.org:/photos/nature/Tatry")
+
+# Add another User
+
+wlm_storage_andrzej = WildlandStorageManifest(
+    bknd_storage_backend = storage_ipfs,
+    wlm_parent = WildlandManifest()
+)
+
+wlm_actor_andrzej = WildlandUserManifest (
+    wlm_storage_directory = wlm_storage_andrzej,
+    paths = ["/uids/andrzej@g.f"])
+
+wlm_storage_andrzej.update_parent (wlm_actor_andrzej)
+
+dump_state()
+
+
+wl_resolve_recursively (
+    golem_foundation_dir_key(),
+    "/wildland/uids/community/j@g.f:/photos/nature/Tatry")
+
 # Turtles all the way down!
 
 wlm_turtles = WildlandManifest (wlm_actor_joanna,
