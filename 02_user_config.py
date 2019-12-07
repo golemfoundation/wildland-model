@@ -64,9 +64,9 @@ some_containers = [
 dump_state()
 
 for c in some_containers:
-    c.add_storage_manifest (storage_ipfs)
-    c.add_storage_manifest (storage_mynas)
-    c.add_storage_manifest (storage_mys3)
+    c.add_storage_backend (storage_ipfs)
+    c.add_storage_backend (storage_mynas)
+    c.add_storage_backend (storage_mys3)
 
 dump_state()
 
@@ -98,7 +98,7 @@ wlm_turtles = WildlandManifest (wlm_actor_joanna,
     paths = ["/turtles"])
 
 
-wlm_turtles.add_storage_manifest (storage_mynas)
+wlm_turtles.add_storage_backend (storage_mynas)
 
 storage_turtles = BackendStorageWildland (wlm_actor_joanna,
     "/uids/j@g.f:/turtles")
@@ -108,9 +108,9 @@ wlm_achilles = WildlandManifest (wlm_actor_joanna,
     content_urls = ["file://"],
     paths = ["/reading/math/GEB"])
 
-wlm_achilles.add_storage_manifest (storage_turtles)
+wlm_achilles.add_storage_backend (storage_turtles)
 dump_state()
 
 # Watch out for loops ahead!
-wlm_turtles.add_storage_manifest (storage_turtles)
+wlm_turtles.add_storage_backend (storage_turtles)
 dump_state()

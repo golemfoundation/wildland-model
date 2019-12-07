@@ -73,15 +73,20 @@ class WildlandManifest (yaml.YAMLObject):
         n = NameSpaceNode (url, url)
         g_wlgraph.add_edge (self, n, type=EdgeType.content)
 
-    def add_storage_manifest (self, storage_backend):
+    def add_storage_manifest (self, wlm_storage):
+        if not isinstance (wlm_storage, WildlandStorageManifest):
+            raise ValueError ("Need a WildlandStorageManifest object!")
+        self.storage_manifests.append(wlm_storage)
+        g_wlgraph.add_edge (self, wlm_storage, type=EdgeType.assigned)
+        wlm_storage.update_admin (self.wlm_actor_admin)
+
+    def add_storage_backend (self, storage_backend):
         if not isinstance (storage_backend, BackendStorage):
             raise ValueError ("Need a BackendStorage object!")
 
-        self.storage_manifests.append(
-            WildlandStorageManifest (
-                bknd_storage_backend=storage_backend,
-                wlm_parent = self)
-                )
+        wlm_manifest = WildlandStorageManifest (
+                bknd_storage_backend=storage_backend)
+        self.add_storage_manifest (wlm_manifest)
 
     def update_admin (self, wlm_actor_admin):
         g_wlgraph.remove_edge (self, self.wlm_actor_admin)
@@ -106,11 +111,10 @@ class WildlandUserManifest (WildlandManifest):
         if wlm_storage_directory is None:
             raise ValueError ("WildlandUserManifest() must specify a storage manifest for its directory!")
 
-        self.wlm_storage_directory = wlm_storage_directory
         Logger.nest_up()
         WildlandManifest.__init__ (self, wlm_actor_admin=self, paths=paths)
         Logger.nest_down()
-        g_wlgraph.add_edge (self, self.wlm_storage_directory, type=EdgeType.dir_at)
+        WildlandManifest.add_storage_manifest (self, wlm_storage_directory)
 
     yaml_tag = u'!wlm_actor'
     @classmethod
@@ -161,24 +165,17 @@ class WildlandStorageManifest (WildlandManifest):
     """A manifest assigned to a container, which tells where it is to be stored.
     """
 
-    def __init__ (self, bknd_storage_backend, wlm_parent=None):
+    def __init__ (self, bknd_storage_backend):
         assert isinstance(bknd_storage_backend, BackendStorage)
         Logger.nest_up()
-        if wlm_parent is None:
-            WildlandManifest.__init__ (self)
-            wlm_parent = self
-        else:
-            WildlandManifest.__init__ (self,
-                wlm_actor_admin=wlm_parent.wlm_actor_admin)
-            wlm_parent = wlm_parent
-
+        WildlandManifest.__init__ (self)
         Logger.nest_down()
         self.bknd_storage_backend = bknd_storage_backend
-        Logger.log (f"adding storage manifest for ({wlm_parent.uuid})")
-
+        Logger.log (
+        f"adding storage manifest ({self}) backed on {bknd_storage_backend}")
         g_wlgraph.add_node (self)
-        g_wlgraph.add_edge (wlm_parent, self, type=EdgeType.assigned)
-        g_wlgraph.add_edge (self, self.bknd_storage_backend, type=EdgeType.refers)
+        g_wlgraph.add_edge (self, self.bknd_storage_backend,
+                            type=EdgeType.points)
 
     yaml_tag = u'!wlm_storage'
     @classmethod
