@@ -30,7 +30,7 @@ def golem_foundation_init():
             "/wildland/uids/golem.foundation",
             "/wildland/dns/golem.foundation"
             ])
-    g_wlgraph.add_edge ('@default_user', wlm_actor_golem_dir)
+    
     dump_state()
 
     wlm_storage_golem.update_parent (wlm_actor_golem_dir)

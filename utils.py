@@ -61,3 +61,18 @@ def wl_resolve_recursively (wlm_actor_root, path):
     Logger.log (f"-> resolved direct actor = {wlm_actor.id}")
     return wl_resolve_single (wlm_actor, path_token)
 
+def wl_set_default_user(wlm_new_default_user):
+    Logger.log (f"setting default user to: {wlm_new_default_user}")
+    global wlm_default_user
+    wlm_default_user = wlm_new_default_user
+    if '@default_user' in g_wlgraph.node:
+        print ("--> node '@default_user' found, removing")
+        g_wlgraph.remove_node('@default_user')
+    g_wlgraph.add_edge ('@default_user', wlm_default_user)
+
+def wl_resolve (path):
+    if wlm_default_user is None:
+        raise AssertionError (
+            "No default user set, use wl_set_default_user() first")
+
+    return wl_resolve_recursively (wlm_default_user, path)
