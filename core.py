@@ -161,16 +161,20 @@ class WildlandStorageManifest (WildlandManifest):
     """A manifest assigned to a container, which tells where it is to be stored.
     """
 
-    def __init__ (self, bknd_storage_backend, wlm_parent):
-        Logger.log (f"adding storage manifest for ({wlm_parent.uuid})")
+    def __init__ (self, bknd_storage_backend, wlm_parent=None):
         assert isinstance(bknd_storage_backend, BackendStorage)
         Logger.nest_up()
-        WildlandManifest.__init__ (self,
-            wlm_actor_admin=wlm_parent.wlm_actor_admin)
+        if wlm_parent is None:
+            WildlandManifest.__init__ (self)
+            wlm_parent = self
+        else:
+            WildlandManifest.__init__ (self,
+                wlm_actor_admin=wlm_parent.wlm_actor_admin)
+            wlm_parent = wlm_parent
+
         Logger.nest_down()
         self.bknd_storage_backend = bknd_storage_backend
-        self.wlm_parent = wlm_parent
-
+        Logger.log (f"adding storage manifest for ({wlm_parent.uuid})")
 
         g_wlgraph.add_node (self)
         g_wlgraph.add_edge (wlm_parent, self, type=EdgeType.assigned)
@@ -182,7 +186,6 @@ class WildlandStorageManifest (WildlandManifest):
         dict_representation = {
             'uuid': wlm.uuid,
             'paths': [],
-            'wlm_parent': wlm.wlm_parent.uuid,
             'backend' : repr (wlm.bknd_storage_backend)
         }
         node = dumper.represent_mapping(u'!wlm_storage', dict_representation)
@@ -190,9 +193,3 @@ class WildlandStorageManifest (WildlandManifest):
 
     def __repr__ (self):
         return "wlm_storage_%s" % (self.uuid)
-
-    def update_parent (self, wlm_parent):
-        prev_parent = self.wlm_parent
-        self.wlm_parent = wlm_parent
-        self.update_admin (wlm_parent)
-        g_wlgraph.remove_node (prev_parent)

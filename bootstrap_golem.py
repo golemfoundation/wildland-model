@@ -19,8 +19,7 @@ def golem_foundation_init():
     dump_state()
 
     wlm_storage_golem = WildlandStorageManifest(
-        bknd_storage_backend = bknd_storage_golem[0],
-        wlm_parent = WildlandManifest()
+        bknd_storage_backend = bknd_storage_golem[0]
     )
     dump_state()
     global wlm_actor_golem_dir
@@ -30,10 +29,6 @@ def golem_foundation_init():
             "/wildland/uids/golem.foundation",
             "/wildland/dns/golem.foundation"
             ])
-    
-    dump_state()
-
-    wlm_storage_golem.update_parent (wlm_actor_golem_dir)
     dump_state()
 
 

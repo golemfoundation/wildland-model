@@ -17,8 +17,7 @@ mailbox_personal = BackendStorage('imap', friendly_name="joasia@example.com")
 storage_mynas = BackendStorage('webdav', friendly_name="My NAS")
 
 wlm_storage_joanna = WildlandStorageManifest(
-    bknd_storage_backend = storage_mynas,
-    wlm_parent = WildlandManifest()
+    bknd_storage_backend = storage_mynas
 )
 
 wlm_actor_joanna = WildlandUserManifest (
@@ -26,5 +25,4 @@ wlm_actor_joanna = WildlandUserManifest (
     paths = ["/uids/j@g.f",
              "/uids/j@q-os.org",
              "/uids/j@i.org"])
-wlm_storage_joanna.update_parent (wlm_actor_joanna)
 dump_state()
