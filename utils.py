@@ -18,10 +18,10 @@ def split_addr_into_actor_and_path (addr):
     # <actor.id>:<path>
     return addr.rsplit (':',1)
 
-def wl_resolve (wlm_actor, path):
+def wl_resolve_single (wlm_actor, path):
     """Find container within The Wildland NameSpace."""
 
-    Logger.log (f"wl_resolve: {wlm_actor.id}:{path}")
+    Logger.log (f"wl_resolve_single: {wlm_actor.id}:{path}")
     verify_path(path)
     full_path = f"{wlm_actor.id}{path}"
     path_as_list = split_path_into_tokens(full_path)
@@ -55,11 +55,11 @@ def wl_resolve_recursively (wlm_actor_root, path):
         # the pubkey part still in the x:y form
         wlm_actor = wl_resolve_recursively (wlm_actor_root, pubkey_token)
     else:
-        wlm_actor = wl_resolve (wlm_actor_root, pubkey_token)
+        wlm_actor = wl_resolve_single (wlm_actor_root, pubkey_token)
     Logger.nest_down()
 
     Logger.log (f"-> resolved direct actor = {wlm_actor.id}")
-    return wl_resolve (wlm_actor, path_token)
+    return wl_resolve_single (wlm_actor, path_token)
 
 def wl_resolve_full_path (full_path):
     pubkey_token, path = full_path.split(':',1)
