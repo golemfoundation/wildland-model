@@ -16,16 +16,31 @@ storage_mynas = BackendStorage('webdav', friendly_name="My NAS")
 mailbox_work = BackendStorage('imap', friendly_name="joanna@golem.foundation")
 mailbox_personal = BackendStorage('imap', friendly_name="joasia@example.com")
 storage_mys3 = BackendStorage('s3', friendly_name="joanna's s3 bucket")
+
+# Create new user:
+
+# 1. Create a storage manifest object which will tell where the directory of the
+# user is located. NOTE: a store manifest requires a user monaifest, but the
+# user is to be created only in the next step, hence we specify a dummy manifest
+# as parent here.
+
 wlm_storage_joanna = WildlandStorageManifest(
     bknd_storage_backend = storage_mynas,
     wlm_parent = WildlandManifest()
 )
+
+# 2. Create a user manifest, provide names for this manifest, refer to the
+# storage manifest we created in the previous step:
 
 wlm_actor_joanna = WildlandUserManifest (
     wlm_storage_directory = wlm_storage_joanna,
     paths = ["/uids/j@g.f",
              "/uids/j@q-os.org",
              "/uids/j@i.org"])
+
+# 3. Now, update the storage manifest so it knew which user it belongs to (TODO:
+# perhaps this is unnecessary after all and we can remove the parent field from
+# the storage manifest?):
 
 wlm_storage_joanna.update_parent (wlm_actor_joanna)
 
