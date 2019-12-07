@@ -113,7 +113,7 @@ def prep_output_dir ():
     os.mkdir (outdir)
 
 def dump_yaml_for_node (filepath, n):
-    Logger.log (f"dumping yaml for node {n}")
+    # Logger.log (f"dumping yaml for node {n}")
 
     with open (filepath, "w") as stream:
         yaml.dump (n, stream)
