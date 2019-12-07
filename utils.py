@@ -61,7 +61,3 @@ def wl_resolve_recursively (wlm_actor_root, path):
     Logger.log (f"-> resolved direct actor = {wlm_actor.id}")
     return wl_resolve_single (wlm_actor, path_token)
 
-def wl_resolve_full_path (full_path):
-    pubkey_token, path = full_path.split(':',1)
-    wlm_actor_root = golem_directory # TODO
-    return wl_resolve_recursively (wlm_actor_root, path)
