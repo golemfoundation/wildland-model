@@ -49,7 +49,7 @@ def dump_graph_with_graphviz (G, filepath, description):
         if n == '@namespace':
             G.node[n]['shape'] = 'plaintext'
             G.node[n]['label'] = "The Wildland NameSpace"
-        if n == '@default_user':
+        if n == '@default_directory':
             G.node[n]['shape'] = 'plaintext'
 
     for u, v, type in G.edges(data='type'):
@@ -76,7 +76,7 @@ def dump_graph_with_graphviz (G, filepath, description):
     vizG.edge_attr['arrowhead'] = 'onormal'
     vizG.edge_attr['penwidth'] = '0.2'
 
-    vizG.add_subgraph(['@namespace', '@default_user'],
+    vizG.add_subgraph(['@namespace', '@default_directory'],
         rank='same')
 
     vizG.add_subgraph([n for n in G.neighbors ('@namespace')],

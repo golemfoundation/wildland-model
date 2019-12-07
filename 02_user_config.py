@@ -5,7 +5,7 @@ from storage import BackendStorage, BackendStorageWildland
 from core import WildlandManifest, WildlandUserManifest, WildlandStorageManifest
 from reporting import dump_state, prep_output_dir
 from bootstrap_golem import golem_foundation_init, golem_foundation_dir_submit_key, golem_foundation_dir_key
-from utils import wl_resolve, wl_set_default_user, wl_resolve_recursively
+from utils import wl_resolve, wl_set_default_directory, wl_resolve_recursively
 
 # User-specific config, building on Golem Foundation default infrastructure
 prep_output_dir()
@@ -71,7 +71,7 @@ for c in some_containers:
 dump_state()
 
 
-wl_set_default_user (wlm_actor_joanna)
+wl_set_default_directory (wlm_actor_joanna)
 wl_resolve ("/uids/j@i.org:/photos/nature/Tatry")
 
 # Add another User
@@ -88,7 +88,7 @@ wlm_actor_andrzej = WildlandUserManifest (
 dump_state()
 
 
-wl_set_default_user (golem_foundation_dir_key())
+wl_set_default_directory (golem_foundation_dir_key())
 wl_resolve("/wildland/uids/community/j@g.f:/photos/nature/Tatry")
 
 # Turtles all the way down!
