@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "Welcome to the utils docker!"
-export __fish_prompt_hostname="utils"
+export __fish_prompt_hostname="wildland-model"
+export fish_prompt="wildland>"
+cd /wildland
 su user
-# while true; do sleep 1; done;
