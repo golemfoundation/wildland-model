@@ -124,7 +124,7 @@ class WildlandUserManifest (WildlandManifest):
         return node
 
     def __repr__ (self):
-        return "wlm_actor_0x%s" % (self.id)
+        return "wlm_actor_%s" % (self.id)
 
     def gen_pubkey (self):
         # We would like the "pubkey hash" to persist accorss runs
