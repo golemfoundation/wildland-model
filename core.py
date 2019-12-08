@@ -74,7 +74,13 @@ class WildlandManifest (yaml.YAMLObject):
         # FIXME:
         n = NameSpaceNode (url, url)
         g_wlgraph.add_edge (self, n, type=EdgeType.content)
-
+        
+    def get_backends (self):
+        bknds = []
+        for wlm_s in self.storage_manifests:
+            bknds.append (wlm_s.bknd_storage_backend)
+        return bknds
+        
     def add_storage_manifest (self, wlm_storage):
         if not isinstance (wlm_storage, WildlandStorageManifest):
             raise ValueError ("Need a WildlandStorageManifest object!")
