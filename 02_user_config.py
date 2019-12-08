@@ -86,8 +86,10 @@ wlm_actor_andrzej = WildlandUserManifest (
 
 wl_set_default_directory (golem_foundation_dir_key())
 dump_state()
-wl_resolve("/wildland/uids/community/j@g.f:/photos/nature/Tatry")
+c = wl_resolve("/wildland/uids/community/j@g.f:/photos/nature/Tatry")
+fetch_container (c)
 
+# exit(0)
 # Turtles all the way down!
 
 wlm_turtles = WildlandManifest (wlm_actor_joanna,
