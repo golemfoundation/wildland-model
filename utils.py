@@ -43,6 +43,17 @@ def wl_resolve_single (wlm_actor, path):
     containers = g_wlgraph.successors(prev_node)
     Logger.log (f"found {len(containers)} container(s):"
             f" - {[c for c in containers]}")
+    container = containers[0] # TODO: support more
+    Logger.log (f"using 1st from the list: {container}")
+    if container.original_wlm is not None:
+        Logger.log (f"using the original container: {container.original_wlm}")
+        container = container.original_wlm
+    wlm_storage = container.storage_manifests[0] # TODO: support more
+    bknd = wlm_storage.bknd_storage_backend
+    Logger.log (f"backend: {bknd}")
+    Logger.log (f"requesting: hash({path}/wildland.yaml) from {bknd}")
+    Logger.nest_down()
+    return container
 
 def wl_resolve_recursively (wlm_actor_root, path):
     Logger.log (f"resolving full path: {path}", icon='R')

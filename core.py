@@ -18,6 +18,7 @@ class WildlandManifest (yaml.YAMLObject):
         # uuid is ephemeral and client isinstance-specific
         # We use it here mostly for easing visualization
         self.uuid = gen_uuid()
+        self.original_wlm = None
 
         if wlm_actor_admin is None:
             self.id = self.uuid # TODO
@@ -141,15 +142,16 @@ class WildlandUserManifest (WildlandManifest):
         # Show we can rewrite wlm_c's paths as we like. See also comment
         # in add_uid_container() on this.
         # TODO: use some better naming convention here?
-        wlm_new_c = WildlandManifest (wlm_actor_admin=self,
-            paths = [f"/@guests/{wlm_c.wlm_actor_admin.id}{path}" for path in wlm_c.paths])
-        g_wlgraph.add_edge (wlm_new_c, wlm_c, type=EdgeType.refers)
-        return wlm_new_c
+        self.wlm_new_c = WildlandManifest (wlm_actor_admin=self,
+            paths = [f"/@guests/{wlm_c.wlm_actor_admin.id}{path}" for path in wlm_c.paths])    
+        g_wlgraph.add_edge (self.wlm_new_c, wlm_c, type=EdgeType.refers)
+        return self.wlm_new_c
 
     def add_uid_container (self, wlm_actor_c):
         Logger.log (f"adding user manifest container {wlm_actor_c.paths[0]} to user {self}")
         Logger.nest_up()
-        wlm_new_c = self.add_container (wlm_actor_c)
+        self.wlm_new_c = self.add_container (wlm_actor_c)
+        self.wlm_new_c.original_wlm = wlm_actor_c
         Logger.nest_down()
 
         # TODO: This is really very best-effort and hard-coded...
@@ -157,9 +159,9 @@ class WildlandUserManifest (WildlandManifest):
         # container's paths. Which is cruciual, e.g. for building reputation
         # directories.
         uid = f"{wlm_actor_c.paths[0].rsplit('/',1).pop()}"
-        wlm_new_c.add_path(f"/wildland/uids/community/{uid}")
-        wlm_new_c.id = wlm_actor_c.id
-        g_wlgraph.add_edge (wlm_new_c, wlm_actor_c, type=EdgeType.refers)
+        self.wlm_new_c.add_path(f"/wildland/uids/community/{uid}")
+        self.wlm_new_c.id = wlm_actor_c.id
+        g_wlgraph.add_edge (self.wlm_new_c, wlm_actor_c, type=EdgeType.refers)
 
 class WildlandStorageManifest (WildlandManifest):
     """A manifest assigned to a container, which tells where it is to be stored.
