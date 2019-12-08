@@ -68,10 +68,8 @@ for c in some_containers:
     c.add_storage_backend (storage_mynas)
     c.add_storage_backend (storage_mys3)
 
-dump_state()
-
-
 wl_set_default_directory (wlm_actor_joanna)
+dump_state()
 wl_resolve ("/uids/j@i.org:/photos/nature/Tatry")
 
 # Add another User
@@ -85,10 +83,9 @@ wlm_actor_andrzej = WildlandUserManifest (
     paths = ["/uids/andrzej@g.f"])
 
 
-dump_state()
-
 
 wl_set_default_directory (golem_foundation_dir_key())
+dump_state()
 wl_resolve("/wildland/uids/community/j@g.f:/photos/nature/Tatry")
 
 # Turtles all the way down!
