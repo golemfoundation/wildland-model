@@ -5,7 +5,7 @@ from storage import BackendStorage, BackendStorageWildland
 from core import WildlandManifest, WildlandUserManifest, WildlandStorageManifest
 from reporting import dump_state, prep_output_dir
 from bootstrap_golem import golem_foundation_init, golem_foundation_dir_submit_key, golem_foundation_dir_key
-from utils import wl_resolve, wl_set_default_directory, wl_resolve_recursively
+from resolve import wl_resolve, wl_set_default_directory, wl_resolve_recursively, fetch_container
 
 # User-specific config, building on Golem Foundation default infrastructure
 prep_output_dir()

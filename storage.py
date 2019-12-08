@@ -4,7 +4,7 @@ from globals import *
 from edge_types import EdgeType
 from logger import Logger
 from ns_graph import NameSpaceNode, NameSpacePath, NameSpace
-from utils import wl_resolve_recursively, split_path_into_tokens
+from resolve import wl_resolve_recursively, split_path_into_tokens
 
 class BackendStorage:
     """A specific storage backend (e.g. specific S3 bucket or WebDAV URL)
