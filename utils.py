@@ -61,3 +61,10 @@ def wl_resolve (path):
             "No default user set, use wl_set_default_directory() first")
 
     return wl_resolve_recursively (wlm_default_directory, path)
+    
+def fetch_container (wlm_c):
+    bknds = wlm_c.get_backends ()
+    Logger.log (f"fetch_container: {wlm_c}, sending requests to all backends:")
+    for b in bknds:
+        # this is just for illustration
+        b.request_raw_data (f"hash({wlm_c.paths[0]}).zip")
