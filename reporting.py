@@ -136,7 +136,7 @@ def dump_state(description="state dump"):
 
     title = f"{description}, i = {dump_state.iter}"
     filepath = f"{outdir}/G-{dump_state.iter}"
-    Logger.log (f"dumping state as G-{dump_state.iter}", icon='S')
+    Logger.log (f"dumping state as G-{dump_state.iter}", icon='*')
     dump_yamls (g_wlgraph, f"{outdir}/yamls-{dump_state.iter}/")
     dump_graph_with_graphviz(nx.DiGraph(g_wlgraph), filepath, title)
 
