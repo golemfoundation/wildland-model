@@ -31,7 +31,7 @@ class BackendStorage:
         self.ns = NameSpace (self, g_wlgraph)
 
     def __repr__ (self):
-        return "bknd_storage_%s-%s" % (self.type, self.friendly_name)
+        return f"bknd_storage_{self.type}_{self.friendly_name}"
 
 class BackendStorageWildland (BackendStorage):
     """A storage implemented on top of a Wildland container. Turtles..."""
@@ -57,7 +57,7 @@ class StorageDriver:
         # g_wlgraph.add_edge ('@storage', self)
 
     def __repr__ (self):
-        return "drv_storage_%r" % (self.type)
+        return f"drv_storage_{self.type}"
 
     def __hash__(self):
         # We need only one driver for each type/protocol of storage

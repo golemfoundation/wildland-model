@@ -51,7 +51,7 @@ class WildlandManifest (yaml.YAMLObject):
         return node
 
     def __repr__ (self):
-        return "wlm_%s" % (self.uuid)
+        return f"wlm_{self.uuid:.8}"
 
     def add_path (self, path):
         verify_path (path)
@@ -128,7 +128,7 @@ class WildlandUserManifest (WildlandManifest):
         return node
 
     def __repr__ (self):
-        return "wlm_actor_%s" % (self.id)
+        return f"wlm_actor_{self.id:.8}"
 
     def gen_pubkey (self):
         # We would like the "pubkey hash" to persist accorss runs
@@ -189,4 +189,4 @@ class WildlandStorageManifest (WildlandManifest):
         return node
 
     def __repr__ (self):
-        return "wlm_storage_%s" % (self.uuid)
+        return f"wlm_storage_{self.uuid:.8}"
