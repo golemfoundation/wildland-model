@@ -22,19 +22,19 @@ def dump_graph_with_graphviz (G, filepath, description):
             'fontsize': 12,
         }
         if isinstance (n, WildlandUserManifest):
-            G.node[n]['label']=f"{n.id}\n(actor manifest)"
+            G.node[n]['label']=f"id:{n.id:.8}\nuuid:{n.uuid:.8}\n(user manifest)"
         elif isinstance (n, WildlandStorageManifest):
-            G.node[n]['label']=f"{n.uuid}\n(storage manifest)"
+            G.node[n]['label']=f"uuid:{n.uuid:.8}\n(storage manifest)"
             G.node[n]['style'] = 'filled'
             G.node[n]['fillcolor'] = 'gray90'
         elif isinstance (n, WildlandManifest):
-            G.node[n]['label']=f"{n.uuid}\n(manifest)"
+            G.node[n]['label']=f"uuid:{n.uuid:.8}\n(container manifest)"
             G.node[n]['penwidth']=2
         elif isinstance (n, NameSpaceNode):
             G.node[n]['label']=f"{n.name}"
             G.node[n]['shape']='plaintext'
         elif isinstance (n, BackendStorageWildland):
-            G.node[n]['label'] = f"wildbackend:\n{n.friendly_name}"
+            G.node[n]['label'] = f"wildland backend:\n{n.friendly_name}"
             G.node[n]['style'] = 'filled'
             G.node[n]['penwidth']=0.5
             G.node[n]['pencolor']='black'
@@ -95,13 +95,15 @@ def dump_graph_with_graphviz (G, filepath, description):
 
 def check_and_report_cycles (graph):
     Logger.log ("checking for cycles in graph")
-
+    Logger.nest_up()
     cycles = list(nx.simple_cycles(graph))
     if len(cycles):
-        Logger.log (f"*** WARNING *** Found {len(cycles)} cycles in graph:")
-        Logger.log (f"-> cycles found: {cycles}")
+        Logger.log (f"WARNING(!): Found {len(cycles)} cycles in graph:", icon='!')
+        for c in cycles:
+            Logger.log (f"{c}")
         # raise AssertionError
-
+    Logger.nest_down()
+    
 import sys
 import os.path
 def prep_output_dir ():
@@ -134,7 +136,7 @@ def dump_state(description="state dump"):
 
     title = f"{description}, i = {dump_state.iter}"
     filepath = f"{outdir}/G-{dump_state.iter}"
-    Logger.log (f"---> dumping state as G-{dump_state.iter}")
+    Logger.log (f"dumping state as G-{dump_state.iter}", icon='S')
     dump_yamls (g_wlgraph, f"{outdir}/yamls-{dump_state.iter}/")
     dump_graph_with_graphviz(nx.DiGraph(g_wlgraph), filepath, title)
 

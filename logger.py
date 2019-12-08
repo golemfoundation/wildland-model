@@ -8,7 +8,11 @@ class Logger:
         Logger.log_ident-= 1
         assert Logger.log_ident >= 0
 
-    def log (message):
-        print ("{pad}- {message}".format(
-            pad="".ljust(Logger.log_ident,'-'),
+    def log (message, icon=" "):
+        level = Logger.log_ident
+        print ("[{icon}]{space}{pad}{arrow} {message}".format(
+            icon=icon,
+            space=" " if level > 0 else "",
+            pad="".ljust(level,'-'),
+            arrow=">" if level > 0 else "",
             message=message))

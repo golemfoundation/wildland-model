@@ -18,11 +18,14 @@ def wl_resolve_single (wlm_actor, path):
     """Find container within The Wildland NameSpace."""
 
     Logger.log (f"wl_resolve_single: {wlm_actor.id}:{path}")
+    Logger.nest_up()
     verify_path(path)
     full_path = f"{wlm_actor.id}{path}"
     path_as_list = split_path_into_tokens(full_path)
 
     # Traverse the NameSpace graph along the 'path', starting from '@namespace':
+    Logger.nest_up()
+    Logger.log (f"traversing the NameSpace tree: ")
     Logger.nest_up()
     prev_node = '@namespace'
     for token in path_as_list:
@@ -33,36 +36,42 @@ def wl_resolve_single (wlm_actor, path):
                 break
         if next_node is None:
             raise LookupError
+        Logger.log (f"{node.name}")
         prev_node = node
-
+    Logger.nest_down()
     Logger.nest_down()
     containers = g_wlgraph.successors(prev_node)
-    Logger.log (f"-> found {len(containers)} container(s):"
-            f" - {[c.uuid for c in containers]}")
-    return containers[0]
+    Logger.log (f"found {len(containers)} container(s):"
+            f" - {[c for c in containers]}")
 
 def wl_resolve_recursively (wlm_actor_root, path):
-    Logger.log (f"resolving full path: {path}")
-    pubkey_token,path_token = split_addr_into_actor_and_path (path)
-    Logger.log (f"-> pubkey_token: {pubkey_token}, path_token: {path_token}")
-    wlm_actor = None
+    Logger.log (f"resolving full path: {path}", icon='R')
     Logger.nest_up()
+    pubkey_token,path_token = split_addr_into_actor_and_path (path)
+    # Logger.log (f"--> pubkey_token: {pubkey_token}, path_token: {path_token}")
+    wlm_actor = None
+
     if len(split_addr_into_actor_and_path (pubkey_token)) > 1:
         # the pubkey part still in the x:y form
         wlm_actor = wl_resolve_recursively (wlm_actor_root, pubkey_token)
     else:
         wlm_actor = wl_resolve_single (wlm_actor_root, pubkey_token)
-    Logger.nest_down()
+    
 
-    Logger.log (f"-> resolved direct actor = {wlm_actor.id}")
-    return wl_resolve_single (wlm_actor, path_token)
+    Logger.log (f"resolved direct actor = {wlm_actor}")
+    ret = wl_resolve_single (wlm_actor, path_token)
+    Logger.nest_down()
+    Logger.log (f"resolved: {path} -> {ret}")
+    return ret
 
 def wl_set_default_directory(wlm_new_default_directory):
-    Logger.log (f"setting default directory to: {wlm_new_default_directory}")
+    Logger.log (f"setting default directory to:"
+        f" {wlm_new_default_directory}"
+        f" (path[0]={wlm_new_default_directory.paths[0]})")
     global wlm_default_directory
     wlm_default_directory = wlm_new_default_directory
     if '@default_directory' in g_wlgraph.node:
-        print ("--> node '@default_directory' found, removing")
+        # Logger.log ("--> node '@default_directory' found, removing")
         g_wlgraph.remove_node('@default_directory')
     g_wlgraph.add_edge ('@default_directory', wlm_default_directory)
 

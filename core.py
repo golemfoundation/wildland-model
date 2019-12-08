@@ -23,7 +23,7 @@ class WildlandManifest (yaml.YAMLObject):
             self.id = self.uuid # TODO
             wlm_actor_admin = self
         self.wlm_actor_admin = wlm_actor_admin
-        Logger.log (f"creating container: {self.uuid}, owned by {self.wlm_actor_admin.id}")
+        Logger.log (f"creating container: {self}, owned by {self.wlm_actor_admin}")
 
         g_wlgraph.add_node (self)
         g_wlgraph.add_edge (self, self.wlm_actor_admin, type=EdgeType.owned_by)
@@ -136,7 +136,7 @@ class WildlandUserManifest (WildlandManifest):
         return f"0x{hashlib.sha256(self.paths[0].encode()).hexdigest()[1:8]}"
 
     def add_container (self, wlm_c):
-        Logger.log (f"adding container {wlm_c.uuid} for user {self.id}")
+        Logger.log (f"adding container {wlm_c} for user {self}")
         # Create a *new* container respresenting 'wlm_c':
         # Show we can rewrite wlm_c's paths as we like. See also comment
         # in add_uid_container() on this.
@@ -147,7 +147,7 @@ class WildlandUserManifest (WildlandManifest):
         return wlm_new_c
 
     def add_uid_container (self, wlm_actor_c):
-        Logger.log (f"adding user manifest container {wlm_actor_c.paths[0]} to user {self.id}")
+        Logger.log (f"adding user manifest container {wlm_actor_c.paths[0]} to user {self}")
         Logger.nest_up()
         wlm_new_c = self.add_container (wlm_actor_c)
         Logger.nest_down()
@@ -171,12 +171,13 @@ class WildlandStorageManifest (WildlandManifest):
         WildlandManifest.__init__ (self)
         Logger.nest_down()
         self.bknd_storage_backend = bknd_storage_backend
-        Logger.log (
-        f"adding storage manifest ({self}) backed on {bknd_storage_backend}")
+        Logger.log (f"adding storage manifest ({self}):")
+        Logger.nest_up()
+        Logger.log (f"backed on {bknd_storage_backend}")
         g_wlgraph.add_node (self)
         g_wlgraph.add_edge (self, self.bknd_storage_backend,
                             type=EdgeType.points)
-
+        Logger.nest_down()
     yaml_tag = u'!wlm_storage'
     @classmethod
     def to_yaml(cls, dumper, wlm):
