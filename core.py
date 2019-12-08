@@ -46,7 +46,8 @@ class WildlandManifest (yaml.YAMLObject):
             'uuid': wlm.uuid,
             'paths': wlm.paths,
             'content': wlm.content,
-            'storage_manifests': repr(wlm.storage_manifests)
+            'storage_manifests': repr(wlm.storage_manifests),
+            'original_wlm' : wlm.original_wlm
         }
         node = dumper.represent_mapping(u'!wlm', dict_representation)
         return node
@@ -123,7 +124,8 @@ class WildlandUserManifest (WildlandManifest):
         dict_representation = {
             'uuid': wlm.uuid,
             'pubkey': wlm.id,
-            'paths': wlm.paths
+            'paths': wlm.paths,
+            'storage_manifests': repr(wlm.storage_manifests)
         }
         node = dumper.represent_mapping(u'!wlm_actor', dict_representation)
         return node
