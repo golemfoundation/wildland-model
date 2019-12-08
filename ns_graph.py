@@ -6,13 +6,15 @@ from ids import gen_uuid
 class NameSpaceNode:
     """A node for use in namespace graphs."""
     def __init__ (self, name, *path):
-        # self.uuid = gen_uuid()
+        self.uuid = gen_uuid()
         self.name = name
 
         # Make sure nodes are uniqe,
         # e.g. ensure that `b` in `/a/b/c` and `/x/b/c` will not
         # be represented by the same node in the graph.
         self.path = "/".join(*path)
+    def __repr__ (self):
+        return "nsn_%s (uuid: %s)" % (self.name, self.uuid)
 
     def __hash__ (self):
         return hash(f"{self.path}/{self.name}")
