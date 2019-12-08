@@ -1,6 +1,7 @@
 # Helper classes for building graph respresenting The Wildland NameSpace
 
 from edge_types import EdgeType
+from ids import gen_uuid
 
 class NameSpaceNode:
     """A node for use in namespace graphs."""

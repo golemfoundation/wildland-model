@@ -4,7 +4,7 @@ from edge_types import EdgeType
 from ns_graph import NameSpaceNode, NameSpacePath, NameSpace
 from storage import BackendStorage, BackendStorageWildland, StorageDriver
 from logger import Logger
-from utils import gen_uuid
+from ids import gen_uuid
 from utils import verify_path, split_path_into_tokens
 import hashlib
 import yaml

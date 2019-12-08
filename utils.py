@@ -1,10 +1,6 @@
 from globals import *
 from logger import Logger
-import uuid
 
-def gen_uuid():
-    # Truncate for better presentation clarity
-    return str(uuid.uuid4())[1:8]
 
 def verify_path (path):
     if path[0] != '/':
