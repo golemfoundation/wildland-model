@@ -125,7 +125,7 @@ def dump_yamls(G, dirpath):
     g_logger.nest_up()
     os.mkdir (dirpath)
     for n in list (g_wlgraph.adj):
-        if isinstance (n, WildlandManifest):
+        if isinstance (n, WildlandManifest) or isinstance (n, BackendStorage):
             filepath = f"{dirpath}/{n}.yaml"
             dump_yaml_for_node (filepath, n)
     g_logger.nest_down()

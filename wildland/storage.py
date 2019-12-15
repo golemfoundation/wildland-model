@@ -1,12 +1,13 @@
 # Classes respresenting storage for Wildland
 
+import yaml
 from . globals import *
 from . edge_types import EdgeType
 from . logger import Logger
 from . ns_graph import NameSpaceNode, NameSpacePath, NameSpace
 from . resolve import wl_resolve_recursively, split_path_into_tokens
 
-class BackendStorage:
+class BackendStorage (yaml.YAMLObject):
     """A specific storage backend (e.g. specific S3 bucket or WebDAV URL)
 
         This includes:
@@ -35,6 +36,17 @@ class BackendStorage:
     def __repr__ (self):
         return f"bknd_storage_{self.type}_{self.friendly_name}"
     
+    yaml_tag = u'!bknd'
+    @classmethod
+    def to_yaml(cls, dumper, bknd):
+        dict_representation = {
+            'type': bknd.type,
+            'name': bknd.friendly_name,
+            'storage': list(bknd.storage)
+        }
+        node = dumper.represent_mapping(u'!bknd', dict_representation)
+        return node
+    
     def store_object (self, path, object):
         if path in self.storage:
             self.logger.log (
@@ -54,7 +66,6 @@ class BackendStorage:
         self.logger.log (f"'-> returning: {Terminal().dim}{object}")
         return object
         
-
 class BackendStorageWildland (BackendStorage):
     """A storage implemented on top of a Wildland container. Turtles..."""
 
