@@ -46,7 +46,7 @@ class BackendStorage:
     
     def request_resolve (self, request):
         
-        self.logger.log (f"{self}: got REQUEST: {request}", icon='B')
+        self.logger.log (f"{self}: got REQUEST: {Terminal().yellow}{request}", icon='B')
         # Lets actually find what the backend would normaly return
         # Of course in practical scenario, the backend would not have
         # a full view of the Graph. And might be as simple as a static
