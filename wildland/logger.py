@@ -1,8 +1,13 @@
-class Logger:
+from blessings import Terminal
 
-    def __init__ (self, name="", nest_level = 0):
+class Logger:
+    
+    t = Terminal()
+
+    def __init__ (self, name="", nest_level = 0, color=""):
         self.name = str(name)
         self.nest_level = nest_level
+        self.color = color
 
     def nest_up(self):
         self.nest_level+= 1
@@ -13,10 +18,12 @@ class Logger:
 
     def log (self, message, icon=" "):
         level = self.nest_level
+        t = Logger.t
         print ("[{icon}]{name}{space}{pad}{arrow} {message}".format(
-            icon=icon,
-            name= f" {self.name}: " if self.name is not "" else "",
+            icon=f"{t.green}{icon}{t.normal}",
+            name= f" {t.dim}{self.name}{t.normal}: " \
+                    if self.name is not "" else "",
             space=" " if level > 0 else "",
             pad="".ljust(level,'-'),
             arrow=">" if level > 0 else "",
-            message=message))
+            message=self.color + message + t.normal))
