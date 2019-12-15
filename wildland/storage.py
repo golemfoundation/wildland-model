@@ -37,7 +37,7 @@ class BackendStorage:
 
     # This simulates normal, Wildland-agnostic request for a blob (file):
     def request_raw_data (self, request):
-        self.logger.log (f"{self}: got REQUEST for blob: {request}", icon='B')
+        self.logger.log (f"got blob request: {Terminal().yellow}{request}", icon='B')
             
     # Note: in real implentation the backend will not need to do any resolve
     # since it would just return the requested file/key -- but as we're
@@ -46,14 +46,14 @@ class BackendStorage:
     
     def request_resolve (self, request):
         
-        self.logger.log (f"{self}: got REQUEST: {Terminal().yellow}{request}", icon='B')
+        self.logger.log (f"got resolv request: {Terminal().yellow}{request}", icon='R')
         # Lets actually find what the backend would normaly return
         # Of course in practical scenario, the backend would not have
         # a full view of the Graph. And might be as simple as a static
         # file server of key-dir server. 
         path_as_list = split_path_into_tokens(request)
 
-        self.logger.log (f"{self}: traversing the NameSpace tree: (ONLY in Simulation!) ", 'B')
+        self.logger.log (f"traversing the NameSpace tree: (ONLY in Simulation!) ")
         self.logger.nest_up()
         prev_node = '@namespace'
         for token in path_as_list:
@@ -64,18 +64,18 @@ class BackendStorage:
                     break
             if next_node is None:
                 raise LookupError
-            self.logger.log (f"{node.name}", 'B')
+            self.logger.log (f"{node.name}")
             prev_node = node
         self.logger.nest_down()
         containers = g_wlgraph.successors(prev_node)
-        self.logger.log (f"{self}: found {len(containers)} container(s):"
-                f" - {[c for c in containers]}", 'B')
+        self.logger.log (f"found {len(containers)} container(s):"
+                f" {[c for c in containers]}")
         container = containers[0] # TODO: support more
-        self.logger.log (f"{self}: using 1st from the list: {container}", 'B')
+        self.logger.log (f"using 1st from the list: {container}")
         if container.original_wlm is not None:
-            self.logger.log (f"{self}: using the original container: {container.original_wlm}", 'B')
+            self.logger.log (f"using the original container: {container.original_wlm}")
             container = container.original_wlm
-        self.logger.log (f"{self}: RESPONSE: {container}.yaml (incl. storage manifest(s))", 'B')
+        self.logger.log (f"RESPONSE: {container}.yaml (incl. storage manifest(s))")
         return container
         
         

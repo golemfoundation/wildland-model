@@ -115,7 +115,7 @@ class WildlandUserManifest (WildlandManifest):
         self.id = self.gen_pubkey()
         self.logger = Logger (self)
 
-        self.logger.log (f"creating new user: {paths[0]}, id = {self.id}")
+        self.logger.log (f"creating new user: {Terminal().blue}{paths[0]}, id = {self.id}")
         assert isinstance (wlm_storage_directory, WildlandStorageManifest)
 
         if wlm_storage_directory is None:

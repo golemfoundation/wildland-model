@@ -10,13 +10,15 @@ from wildland.ns_graph import NameSpace
 def wl_barebones_init():
 
     print (
+    Terminal().green + \
     """
       o       o   o    o o             o
       |       | o |    | |             |
       o   o   o   |  o-O |  oo o-o   o-O
        \ / \ /  | | |  | | | | |  | |  |
         o   o   | o  o-o o o-o-o  o  o-o
-    """
+    """ + \
+    Terminal().normal
     )
     # figlet fonts credits:
     # Tinker-toy by Wendell Hicken 11/93 (whicken@parasoft.com)
