@@ -1,5 +1,6 @@
 # Core global objects
 
+from blessings import Terminal
 import networkx as nx
 from . ns_graph import NameSpace
 from . logger import Logger

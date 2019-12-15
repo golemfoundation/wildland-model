@@ -28,7 +28,7 @@ class BackendStorage:
         g_wlgraph.add_edge (self, self.drv, type=EdgeType.provided_by)
         # A node respresenting mounted fs tree (not a Container)
         self.ns = NameSpace (self, g_wlgraph)
-        self.logger = Logger (self)
+        self.logger = Logger (self, color=Terminal().green)
         self.logger.log (f"creating storage {type} backend {friendly_name}")
 
 
@@ -89,7 +89,6 @@ class BackendStorageWildland (BackendStorage):
         self.backend_container = wl_resolve_recursively (uid, path)
         self.friendly_name =\
             f"{uid.id}:{path}"
-        self.logger = Logger (self)
         g_wlgraph.add_edge (self, self.backend_container, type=EdgeType.stored_at)
 
 class StorageDriver:

@@ -179,7 +179,6 @@ class WildlandStorageManifest (WildlandManifest):
         assert isinstance(bknd_storage_backend, BackendStorage)
         WildlandManifest.__init__ (self)
         self.bknd_storage_backend = bknd_storage_backend
-        self.logger = Logger (self)
         self.logger.log (f"adding storage manifest ({self}):")
         self.logger.log (f"backed on {bknd_storage_backend}")
         g_wlgraph.add_node (self)
