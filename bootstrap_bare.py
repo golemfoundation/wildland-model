@@ -1,10 +1,11 @@
-from globals import *
-from logger import Logger
-from reporting import dump_state
-from ns_graph import NameSpace
+#!/usr/bin/python3
+
+from wildland.globals import *
+from wildland.logger import Logger
+from wildland.reporting import dump_state
+from wildland.ns_graph import NameSpace
 
 # Barebones Init
-
 
 def wl_barebones_init():
 
@@ -22,3 +23,6 @@ def wl_barebones_init():
 
     Logger.log ("Wildland client barebones init")
     g_wlgraph.add_node('@namespace')
+
+if __name__ == "__main__":
+    wl_barebones_init()

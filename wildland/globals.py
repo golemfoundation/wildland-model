@@ -1,7 +1,7 @@
 # Core global objects
 
 import networkx as nx
-from ns_graph import NameSpace
+from . ns_graph import NameSpace
 
 g_wlgraph = nx.DiGraph()
 g_drivers_storage = {}

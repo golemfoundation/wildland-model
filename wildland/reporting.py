@@ -4,12 +4,12 @@ import os
 import yaml
 from datetime import datetime
 
-from globals import *
-from logger import Logger
-from core import WildlandManifest, WildlandUserManifest, WildlandStorageManifest
-from storage import BackendStorage, BackendStorageWildland, StorageDriver
-from ns_graph import NameSpaceNode, NameSpace
-from edge_types import EdgeType
+from . globals import *
+from . logger import Logger
+from . core import WildlandManifest, WildlandUserManifest, WildlandStorageManifest
+from . storage import BackendStorage, BackendStorageWildland, StorageDriver
+from . ns_graph import NameSpaceNode, NameSpace
+from . edge_types import EdgeType
 
 def dump_graph_with_graphviz (G, filepath, description):
 

@@ -1,5 +1,5 @@
-from globals import *
-from logger import Logger
+from . globals import *
+from . logger import Logger
 
 
 def verify_path (path):

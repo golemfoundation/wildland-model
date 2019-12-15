@@ -1,14 +1,14 @@
 # Core Wildland classes
 
-from edge_types import EdgeType
-from ns_graph import NameSpaceNode, NameSpacePath, NameSpace
-from storage import BackendStorage, BackendStorageWildland, StorageDriver
-from logger import Logger
-from ids import gen_uuid
-from resolve import verify_path, split_path_into_tokens
+from . edge_types import EdgeType
+from . ns_graph import NameSpaceNode, NameSpacePath, NameSpace
+from . storage import BackendStorage, BackendStorageWildland, StorageDriver
+from . logger import Logger
+from . ids import gen_uuid
+from . resolve import verify_path, split_path_into_tokens
 import hashlib
 import yaml
-from globals import *
+from . globals import *
 
 class WildlandManifest (yaml.YAMLObject):
     """A basis for a Wildland container."""
