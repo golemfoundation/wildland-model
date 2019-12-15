@@ -16,7 +16,6 @@ class BackendStorage:
     """
 
     def __init__(self, type, friendly_name=""):
-        Logger.log (f"creating storage {type} backend {friendly_name}")
 
         self.type = type
         self.friendly_name = friendly_name
@@ -29,13 +28,16 @@ class BackendStorage:
         g_wlgraph.add_edge (self, self.drv, type=EdgeType.provided_by)
         # A node respresenting mounted fs tree (not a Container)
         self.ns = NameSpace (self, g_wlgraph)
+        self.logger = Logger (self)
+        self.logger.log (f"creating storage {type} backend {friendly_name}")
+
 
     def __repr__ (self):
         return f"bknd_storage_{self.type}_{self.friendly_name}"
 
     # This simulates normal, Wildland-agnostic request for a blob (file):
     def request_raw_data (self, request):
-        Logger.log (f"{self}: got REQUEST for blob: {request}", icon='B')
+        self.logger.log (f"{self}: got REQUEST for blob: {request}", icon='B')
             
     # Note: in real implentation the backend will not need to do any resolve
     # since it would just return the requested file/key -- but as we're
@@ -44,15 +46,15 @@ class BackendStorage:
     
     def request_resolve (self, request):
         
-        Logger.log (f"{self}: got REQUEST: {request}", icon='B')
+        self.logger.log (f"{self}: got REQUEST: {request}", icon='B')
         # Lets actually find what the backend would normaly return
         # Of course in practical scenario, the backend would not have
         # a full view of the Graph. And might be as simple as a static
         # file server of key-dir server. 
         path_as_list = split_path_into_tokens(request)
 
-        Logger.log (f"{self}: traversing the NameSpace tree: (ONLY in Simulation!) ", 'B')
-        Logger.nest_up()
+        self.logger.log (f"{self}: traversing the NameSpace tree: (ONLY in Simulation!) ", 'B')
+        self.logger.nest_up()
         prev_node = '@namespace'
         for token in path_as_list:
             next_node = None
@@ -62,18 +64,18 @@ class BackendStorage:
                     break
             if next_node is None:
                 raise LookupError
-            Logger.log (f"{node.name}", 'B')
+            self.logger.log (f"{node.name}", 'B')
             prev_node = node
-        Logger.nest_down()
+        self.logger.nest_down()
         containers = g_wlgraph.successors(prev_node)
-        Logger.log (f"{self}: found {len(containers)} container(s):"
+        self.logger.log (f"{self}: found {len(containers)} container(s):"
                 f" - {[c for c in containers]}", 'B')
         container = containers[0] # TODO: support more
-        Logger.log (f"{self}: using 1st from the list: {container}", 'B')
+        self.logger.log (f"{self}: using 1st from the list: {container}", 'B')
         if container.original_wlm is not None:
-            Logger.log (f"{self}: using the original container: {container.original_wlm}", 'B')
+            self.logger.log (f"{self}: using the original container: {container.original_wlm}", 'B')
             container = container.original_wlm
-        Logger.log (f"{self}: RESPONSE: {container}.yaml (incl. storage manifest(s))", 'B')
+        self.logger.log (f"{self}: RESPONSE: {container}.yaml (incl. storage manifest(s))", 'B')
         return container
         
         
@@ -87,6 +89,7 @@ class BackendStorageWildland (BackendStorage):
         self.backend_container = wl_resolve_recursively (uid, path)
         self.friendly_name =\
             f"{uid.id}:{path}"
+        self.logger = Logger (self)
         g_wlgraph.add_edge (self, self.backend_container, type=EdgeType.stored_at)
 
 class StorageDriver:
@@ -97,7 +100,8 @@ class StorageDriver:
     """
     def __init__ (self, type):
         self.type=type
-        Logger.log (f"loading storage driver: {type}")
+        self.logger = Logger (self)
+        self.logger.log (f"loading storage driver: {type}")
         g_wlgraph.add_node (self)
         # g_wlgraph.add_edge ('@storage', self)
 

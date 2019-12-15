@@ -94,16 +94,16 @@ def dump_graph_with_graphviz (G, filepath, description):
 #     plt.savefig (f"{filepath}.pdf")
 
 def check_and_report_cycles (graph):
-    Logger.log ("checking for cycles in graph")
-    Logger.nest_up()
+    g_logger.log ("checking for cycles in graph")
+    g_logger.nest_up()
     cycles = list(nx.simple_cycles(graph))
     if len(cycles):
-        Logger.log (f"WARNING(!): Found {len(cycles)} cycles in graph:", icon='!')
+        g_logger.log (f"WARNING(!): Found {len(cycles)} cycles in graph:", icon='!')
         for c in cycles:
-            Logger.log (f"{c}")
+            g_logger.log (f"{c}")
         # raise AssertionError
-    Logger.nest_down()
-    
+    g_logger.nest_down()
+
 import sys
 import os.path
 def prep_output_dir ():
@@ -111,24 +111,24 @@ def prep_output_dir ():
     timestamp = f"{now.year}-{now.month:02}-{now.day:02}-{now.hour:02}{now.minute:02}{now.second:02}"
     global outdir
     outdir = f"./output/run-{timestamp}-{os.path.basename(sys.argv[0])}"
-    Logger.log (f"Preparing output dir for this run: {outdir}")
+    g_logger.log (f"Preparing output dir for this run: {outdir}")
     os.mkdir (outdir)
 
 def dump_yaml_for_node (filepath, n):
-    # Logger.log (f"dumping yaml for node {n}")
+    # g_logger.log (f"dumping yaml for node {n}")
 
     with open (filepath, "w") as stream:
         yaml.dump (n, stream)
 
 def dump_yamls(G, dirpath):
-    Logger.log (f"dumping yamls to {dirpath}")
-    Logger.nest_up()
+    g_logger.log (f"dumping yamls to {dirpath}")
+    g_logger.nest_up()
     os.mkdir (dirpath)
     for n in list (g_wlgraph.adj):
         if isinstance (n, WildlandManifest):
             filepath = f"{dirpath}/{n}.yaml"
             dump_yaml_for_node (filepath, n)
-    Logger.nest_down()
+    g_logger.nest_down()
 
 def dump_state(description="state dump"):
     if 'iter' not in dump_state.__dict__:
@@ -136,7 +136,7 @@ def dump_state(description="state dump"):
 
     title = f"{description}, i = {dump_state.iter}"
     filepath = f"{outdir}/G-{dump_state.iter}"
-    Logger.log (f"dumping state as G-{dump_state.iter}", icon='*')
+    g_logger.log (f"dumping state as G-{dump_state.iter}", icon='*')
     dump_yamls (g_wlgraph, f"{outdir}/yamls-{dump_state.iter}/")
     dump_graph_with_graphviz(nx.DiGraph(g_wlgraph), filepath, title)
 

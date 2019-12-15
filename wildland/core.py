@@ -24,7 +24,8 @@ class WildlandManifest (yaml.YAMLObject):
             self.id = self.uuid # TODO
             wlm_actor_admin = self
         self.wlm_actor_admin = wlm_actor_admin
-        Logger.log (f"creating container: {self}, owned by {self.wlm_actor_admin}")
+        self.logger = Logger (self)
+        self.logger.log (f"creating container owned by {self.wlm_actor_admin}")
 
         g_wlgraph.add_node (self)
         g_wlgraph.add_edge (self, self.wlm_actor_admin, type=EdgeType.owned_by)
@@ -112,16 +113,15 @@ class WildlandUserManifest (WildlandManifest):
 
         self.paths = paths
         self.id = self.gen_pubkey()
+        self.logger = Logger (self)
 
-        Logger.log (f"creating new user: {paths[0]}, id = {self.id}")
+        self.logger.log (f"creating new user: {paths[0]}, id = {self.id}")
         assert isinstance (wlm_storage_directory, WildlandStorageManifest)
 
         if wlm_storage_directory is None:
             raise ValueError ("WildlandUserManifest() must specify a storage manifest for its directory!")
 
-        Logger.nest_up()
         WildlandManifest.__init__ (self, wlm_actor_admin=self, paths=paths)
-        Logger.nest_down()
         WildlandManifest.add_storage_manifest (self, wlm_storage_directory)
 
     yaml_tag = u'!wlm_actor'
@@ -145,7 +145,7 @@ class WildlandUserManifest (WildlandManifest):
         return f"0x{hashlib.sha256(self.paths[0].encode()).hexdigest()[1:8]}"
 
     def add_container (self, wlm_c):
-        Logger.log (f"adding container {wlm_c} for user {self}")
+        self.logger.log (f"adding container {wlm_c} for user {self}")
         # Create a *new* container respresenting 'wlm_c':
         # Show we can rewrite wlm_c's paths as we like. See also comment
         # in add_uid_container() on this.
@@ -156,11 +156,11 @@ class WildlandUserManifest (WildlandManifest):
         return self.wlm_new_c
 
     def add_uid_container (self, wlm_actor_c):
-        Logger.log (f"adding user manifest container {wlm_actor_c.paths[0]} to user {self}")
-        Logger.nest_up()
+        self.logger.log (f"adding user manifest container {wlm_actor_c.paths[0]} to user {self}")
+        self.logger.nest_up()
         self.wlm_new_c = self.add_container (wlm_actor_c)
         self.wlm_new_c.original_wlm = wlm_actor_c
-        Logger.nest_down()
+        self.logger.nest_down()
 
         # TODO: This is really very best-effort and hard-coded...
         # Just to show the dir owner can arbitrairly rewrite offered
@@ -177,17 +177,14 @@ class WildlandStorageManifest (WildlandManifest):
 
     def __init__ (self, bknd_storage_backend):
         assert isinstance(bknd_storage_backend, BackendStorage)
-        Logger.nest_up()
         WildlandManifest.__init__ (self)
-        Logger.nest_down()
         self.bknd_storage_backend = bknd_storage_backend
-        Logger.log (f"adding storage manifest ({self}):")
-        Logger.nest_up()
-        Logger.log (f"backed on {bknd_storage_backend}")
+        self.logger = Logger (self)
+        self.logger.log (f"adding storage manifest ({self}):")
+        self.logger.log (f"backed on {bknd_storage_backend}")
         g_wlgraph.add_node (self)
         g_wlgraph.add_edge (self, self.bknd_storage_backend,
                             type=EdgeType.points)
-        Logger.nest_down()
     yaml_tag = u'!wlm_storage'
     @classmethod
     def to_yaml(cls, dumper, wlm):

@@ -21,7 +21,7 @@ def wl_barebones_init():
     # figlet fonts credits:
     # Tinker-toy by Wendell Hicken 11/93 (whicken@parasoft.com)
 
-    Logger.log ("Wildland client barebones init")
+    g_logger.log ("Wildland client barebones init")
     g_wlgraph.add_node('@namespace')
 
 if __name__ == "__main__":
