@@ -73,9 +73,9 @@ def simple_users_setup():
     dump_state()
 
     for c in some_containers:
-        c.add_storage_backend (storage_ipfs)
-        c.add_storage_backend (storage_mynas)
-        c.add_storage_backend (storage_mys3)
+        c.add_storage_manifest (WildlandStorageManifest(storage_ipfs))
+        c.add_storage_manifest (WildlandStorageManifest(storage_mynas))
+        c.add_storage_manifest (WildlandStorageManifest(storage_mys3))
 
     # Add another User
 
@@ -98,6 +98,6 @@ wl_resolve ("/users/names/Ijon Tichy:/trips/14th/kurdle")
 wl_set_default_directory (golem_foundation_dir_key())
 dump_state()
 c = wl_resolve(
-    "/wildland/uids/community/Ijon Tichy:"\
+    "/wildland/community/users/Ijon Tichy:"\
     "/trips/14th/kurdle")
 fetch_container (c)

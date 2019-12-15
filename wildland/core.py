@@ -26,19 +26,18 @@ class WildlandManifest (yaml.YAMLObject):
         self.wlm_actor_admin = wlm_actor_admin
         self.logger = Logger (self)
         self.logger.log (f"creating container owned by {self.wlm_actor_admin}")
-
         g_wlgraph.add_node (self)
         g_wlgraph.add_edge (self, self.wlm_actor_admin, type=EdgeType.owned_by)
 
         self.paths = []
         for path in paths:
+            self.logger.log (f"- adding path: {Terminal().yellow}{path}")
             self.add_path (path)
 
+        self.storage_manifests = []
         self.content = []
         for content_url in content_urls:
             self.add_content (content_url)
-
-        self.storage_manifests = []
 
     yaml_tag = u'!wlm'
     @classmethod
@@ -66,21 +65,10 @@ class WildlandManifest (yaml.YAMLObject):
 
     def add_content (self, url):
         self.content.append (str(url))
-        # TODO: consider implementing BackendURL class and call it from here?
-        # This might be useful in some more recursive scenarios,
-        # e.g. when URL will be of a form of `wildland:` :)
-        # Right now we simulate the recursive scenario by explicitily
-        # defining BackendStorageWildland.
-
-        # FIXME:
-        n = NameSpaceNode (url, url)
-        g_wlgraph.add_edge (self, n, type=EdgeType.content)
+        self.store_content()
         
-    def get_backends (self):
-        bknds = []
-        for wlm_s in self.storage_manifests:
-            bknds.append (wlm_s.bknd_storage_backend)
-        return bknds
+    def get_storage_manifests (self):
+        return self.storage_manifests
         
     def add_storage_manifest (self, wlm_storage):
         if not isinstance (wlm_storage, WildlandStorageManifest):
@@ -88,14 +76,22 @@ class WildlandManifest (yaml.YAMLObject):
         self.storage_manifests.append(wlm_storage)
         g_wlgraph.add_edge (self, wlm_storage, type=EdgeType.assigned)
         wlm_storage.update_admin (self.wlm_actor_admin)
-
-    def add_storage_backend (self, storage_backend):
-        if not isinstance (storage_backend, BackendStorage):
-            raise ValueError ("Need a BackendStorage object!")
-
-        wlm_manifest = WildlandStorageManifest (
-                bknd_storage_backend=storage_backend)
-        self.add_storage_manifest (wlm_manifest)
+        self.store_manifest()
+        self.store_content()
+        
+    # Save the container manifest on the underlying storage backend
+    def store_manifest (self):
+        assert len(self.storage_manifests) > 0
+        for s in self.storage_manifests:
+            for path in self.paths:
+                s.store_manifest(path=path, object=self)
+    
+    def store_content (self):
+        self.logger.log (f"store_content(): c={self.content}, s={self.storage_manifests}")
+        for c in self.content:
+            for s in self.storage_manifests:
+                for path in self.paths:
+                    s.store_content (path=path, object=c)
 
     def update_admin (self, wlm_actor_admin):
         g_wlgraph.remove_edge (self, self.wlm_actor_admin)
@@ -114,6 +110,7 @@ class WildlandUserManifest (WildlandManifest):
         self.paths = paths
         self.id = self.gen_pubkey()
         self.logger = Logger (self)
+        self.original_storage_manifests = None
 
         self.logger.log (f"creating new user: {Terminal().blue}{paths[0]}, id = {self.id}")
         assert isinstance (wlm_storage_directory, WildlandStorageManifest)
@@ -144,33 +141,6 @@ class WildlandUserManifest (WildlandManifest):
         # to allow for more complex experiments :)
         return f"0x{hashlib.sha256(self.paths[0].encode()).hexdigest()[1:8]}"
 
-    def add_container (self, wlm_c):
-        self.logger.log (f"adding container {wlm_c} for user {self}")
-        # Create a *new* container respresenting 'wlm_c':
-        # Show we can rewrite wlm_c's paths as we like. See also comment
-        # in add_uid_container() on this.
-        # TODO: use some better naming convention here?
-        self.wlm_new_c = WildlandManifest (wlm_actor_admin=self,
-            paths = [f"/@guests/{wlm_c.wlm_actor_admin.id}{path}" for path in wlm_c.paths])    
-        g_wlgraph.add_edge (self.wlm_new_c, wlm_c, type=EdgeType.refers)
-        return self.wlm_new_c
-
-    def add_uid_container (self, wlm_actor_c):
-        self.logger.log (f"adding user manifest container {wlm_actor_c.paths[0]} to user {self}")
-        self.logger.nest_up()
-        self.wlm_new_c = self.add_container (wlm_actor_c)
-        self.wlm_new_c.original_wlm = wlm_actor_c
-        self.logger.nest_down()
-
-        # TODO: This is really very best-effort and hard-coded...
-        # Just to show the dir owner can arbitrairly rewrite offered
-        # container's paths. Which is cruciual, e.g. for building reputation
-        # directories.
-        uid = f"{wlm_actor_c.paths[0].rsplit('/',1).pop()}"
-        self.wlm_new_c.add_path(f"/wildland/uids/community/{uid}")
-        self.wlm_new_c.id = wlm_actor_c.id
-        g_wlgraph.add_edge (self.wlm_new_c, wlm_actor_c, type=EdgeType.refers)
-
 class WildlandStorageManifest (WildlandManifest):
     """A manifest assigned to a container, which tells where it is to be stored.
     """
@@ -197,3 +167,25 @@ class WildlandStorageManifest (WildlandManifest):
 
     def __repr__ (self):
         return f"wlm_storage_{self.uuid:.8}"
+    
+    def get_backend(self):
+        return self.bknd_storage_backend
+        
+    def encode_path_for_backend (self, path):
+        return path.strip('/').replace('/','_').replace(' ','_')
+
+    def store_manifest (self, path, object):
+        path = self.encode_path_for_backend (path) + ".yaml"
+        self.bknd_storage_backend.store_object (path=path, object=object)
+
+    def store_content (self, path, object):
+        path = self.encode_path_for_backend (path) + ".blob"
+        self.bknd_storage_backend.store_object (path=path, object=object)
+
+    def request_manifest (self, path):
+        path = self.encode_path_for_backend (path) + ".yaml"
+        return self.bknd_storage_backend.request_object(path)
+
+    def request_content (self, path):
+        path = self.encode_path_for_backend (path) + ".blob"
+        return self.bknd_storage_backend.request_object(path)
