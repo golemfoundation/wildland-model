@@ -17,7 +17,7 @@ def split_addr_into_actor_and_path (addr):
 def wl_resolve_single (wlm_actor, path):
     """Find container within The Wildland NameSpace."""
 
-    g_logger.log (f"wl_resolve_single: {wlm_actor.id}:{path}")
+    g_logger.log (f"wl_resolve_single: {g_logger.t.blue}{wlm_actor.id}:{path}")
     verify_path(path)
     full_path = f"{wlm_actor.id}{path}"
 
@@ -25,7 +25,7 @@ def wl_resolve_single (wlm_actor, path):
     return bknd.request_resolve (full_path)
 
 def wl_resolve_recursively (wlm_actor_root, path):
-    g_logger.log (f"resolving full path: {path}", icon='r')
+    g_logger.log (f"resolving full path: {g_logger.t.blue}{path}", icon='r')
     g_logger.nest_up()
     pubkey_token,path_token = split_addr_into_actor_and_path (path)
     # g_logger.log (f"--> pubkey_token: {pubkey_token}, path_token: {path_token}")
@@ -38,10 +38,11 @@ def wl_resolve_recursively (wlm_actor_root, path):
         wlm_actor = wl_resolve_single (wlm_actor_root, pubkey_token)
     
 
-    g_logger.log (f"resolved direct actor = {wlm_actor}")
+    g_logger.log (f"resolved direct actor = {g_logger.t.blue}{wlm_actor}")
     ret = wl_resolve_single (wlm_actor, path_token)
     g_logger.nest_down()
-    g_logger.log (f"resolved: {path} -> {ret}")
+    g_logger.log (f"resolved: {g_logger.t.blue}{path}{g_logger.t.normal}"\
+                    f" -> {ret}")
     return ret
 
 def wl_set_default_directory(wlm_new_default_directory):
