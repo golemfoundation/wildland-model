@@ -22,7 +22,6 @@ def wl_resolve_single (wlm_actor, path, logger = None):
                 f"{wlm_actor}:"
                 f"{colorize_wl_path(path)}", icon='.')
     verify_path(path)
-    # full_path = f"{wlm_actor.id}{path}"
     wlm_storage = None
     if wlm_actor.original_storage_manifests is not None:
         wlm_storage = wlm_actor.original_storage_manifests[0]
@@ -36,9 +35,7 @@ def wl_resolve_recursively (wlm_actor_root, path, logger = None):
     if logger:
         logger.log (f"resolving path: {colorize_wl_path(path)}", icon='r')
         logger.log (f"`-> using dir: {colorize_wl_path(wlm_actor_root)}", icon='.')
-        # logger.nest_up()
     pubkey_token,path_token = split_addr_into_actor_and_path (path)
-    # g_logger.log (f"--> pubkey_token: {pubkey_token}, path_token: {path_token}")
     wlm_actor = None
 
     if len(split_addr_into_actor_and_path (pubkey_token)) > 1:
@@ -50,7 +47,6 @@ def wl_resolve_recursively (wlm_actor_root, path, logger = None):
         logger.log (f"`-> resolved direct actor: {colorize_wl_path(wlm_actor)}", icon='.')
     ret = wl_resolve_single (wlm_actor, path_token)
     if logger:
-        # logger.nest_down()
         logger.log (f"`-> resolved: {colorize_wl_path(path)}"\
                     f" -> {ret}", icon='R')
     return ret

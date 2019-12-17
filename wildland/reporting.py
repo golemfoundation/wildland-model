@@ -94,15 +94,12 @@ def dump_graph_with_graphviz (G, filepath, description):
 #     plt.savefig (f"{filepath}.pdf")
 
 def check_and_report_cycles (graph):
-    g_logger.log ("checking for cycles in graph")
-    g_logger.nest_up()
+    g_logger.log ("- checking for cycles in graph")
     cycles = list(nx.simple_cycles(graph))
     if len(cycles):
         g_logger.log (f"WARNING(!): Found {len(cycles)} cycles in graph:", icon='!')
         for c in cycles:
-            g_logger.log (f"{c}")
-        # raise AssertionError
-    g_logger.nest_down()
+            g_logger.log (f"-> {c}")
 
 import sys
 import os.path
@@ -112,7 +109,7 @@ def prep_output_dir ():
     global outdir
     basedir="./output"
     outdir = f"{basedir}/run-{timestamp}-{os.path.basename(sys.argv[0])}"
-    g_logger.log (f"Preparing output dir for this run: {outdir}")
+    g_logger.log (f"- Preparing output dir for this run: {outdir}")
     os.mkdir (outdir)
     last_symlink=f"{basedir}/@last"
     try:
@@ -129,14 +126,12 @@ def dump_yaml_for_node (filepath, n):
         yaml.dump (n, stream)
 
 def dump_yamls(G, dirpath):
-    g_logger.log (f"dumping yamls to {dirpath}")
-    g_logger.nest_up()
+    g_logger.log (f"- dumping yamls to {dirpath}")
     os.makedirs (dirpath)
     for n in list (g_wlgraph.adj):
         if isinstance (n, WildlandManifest) or isinstance (n, BackendStorage):
             filepath = f"{dirpath}/{n}.yaml"
             dump_yaml_for_node (filepath, n)
-    g_logger.nest_down()
 
 def dump_state(description="state dump", clients=[]):
     if 'iter' not in dump_state.__dict__:
@@ -158,6 +153,7 @@ def dump_state(description="state dump", clients=[]):
     check_and_report_cycles (storage_graph)
 
     for cli in clients:
+        g_logger.log (f"- creating forrest for {cli.me}")
         filepath = f"{stepdir}/forest-{cli.me}"    
         cli.dump (filepath)
     dump_state.iter += 1
