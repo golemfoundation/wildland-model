@@ -128,7 +128,7 @@ def dump_yaml_for_node (filepath, n):
 def dump_yamls(G, dirpath):
     g_logger.log (f"dumping yamls to {dirpath}")
     g_logger.nest_up()
-    os.mkdir (dirpath)
+    os.makedirs (dirpath)
     for n in list (g_wlgraph.adj):
         if isinstance (n, WildlandManifest) or isinstance (n, BackendStorage):
             filepath = f"{dirpath}/{n}.yaml"
@@ -140,11 +140,11 @@ def dump_state(description="state dump", clients=[]):
         dump_state.iter = 0
 
     title = f"{description}, i = {dump_state.iter}"
-    filepath = f"{outdir}/G-{dump_state.iter}"
-    g_logger.log (f"dumping state as G-{dump_state.iter}", icon='*')
-    dump_yamls (g_wlgraph, f"{outdir}/yamls-{dump_state.iter}/")
-    dump_graph_with_graphviz(nx.DiGraph(g_wlgraph), filepath, title)
+    stepdir = f"{outdir}/step-{dump_state.iter:02}"
+    g_logger.log (f"dumping state at {Terminal().yellow}step {dump_state.iter}", icon='*')
 
+    dump_yamls (g_wlgraph, f"{stepdir}/yamls/")
+    dump_graph_with_graphviz(nx.DiGraph(g_wlgraph), f"{stepdir}/graph", title)
 
     # Create a copy of the graph with signed relations removed
     # and check the resulting graph for loops:
@@ -155,6 +155,6 @@ def dump_state(description="state dump", clients=[]):
     check_and_report_cycles (storage_graph)
 
     for cli in clients:
-        filepath = f"{outdir}/cli-{dump_state.iter}-{cli.me}"    
+        filepath = f"{stepdir}/forest-{cli.me}"    
         cli.dump (filepath)
     dump_state.iter += 1
