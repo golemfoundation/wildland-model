@@ -94,7 +94,7 @@ def dump_graph_with_graphviz (G, filepath, description):
 #     plt.savefig (f"{filepath}.pdf")
 
 def check_and_report_cycles (graph):
-    g_logger.log ("- checking for cycles in graph")
+    g_logger.log ("- checking for cycles in graph", msg_color=Terminal().dim)
     cycles = list(nx.simple_cycles(graph))
     if len(cycles):
         g_logger.log (f"WARNING(!): Found {len(cycles)} cycles in graph:", icon='!')
@@ -109,7 +109,7 @@ def prep_output_dir ():
     global outdir
     basedir="./output"
     outdir = f"{basedir}/run-{timestamp}-{os.path.basename(sys.argv[0])}"
-    g_logger.log (f"- Preparing output dir for this run: {outdir}")
+    g_logger.log (f"- Preparing output dir for this run: {outdir}", msg_color=Terminal().dim)
     os.mkdir (outdir)
     last_symlink=f"{basedir}/@last"
     try:
@@ -126,7 +126,7 @@ def dump_yaml_for_node (filepath, n):
         yaml.dump (n, stream)
 
 def dump_yamls(G, dirpath):
-    g_logger.log (f"- dumping yamls to {dirpath}")
+    g_logger.log (f"- dumping yamls to {dirpath}", msg_color=Terminal().dim)
     os.makedirs (dirpath)
     for n in list (g_wlgraph.adj):
         if isinstance (n, WildlandManifest) or isinstance (n, BackendStorage):
@@ -153,7 +153,7 @@ def dump_state(description="state dump", clients=[]):
     check_and_report_cycles (storage_graph)
 
     for cli in clients:
-        g_logger.log (f"- creating forrest for {cli.me}")
+        g_logger.log (f"- creating forrest for {cli.me}", msg_color=Terminal().dim)
         filepath = f"{stepdir}/forest-{cli.me}"    
         cli.dump (filepath)
     dump_state.iter += 1

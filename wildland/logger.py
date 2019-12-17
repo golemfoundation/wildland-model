@@ -9,11 +9,10 @@ class Logger:
         self.color = color
         self.icon = icon
 
-    def log (self, message, icon=" "):
+    def log (self, message, icon=" ", msg_color=Terminal().normal):
         t = Terminal()
-        print ("[{icon}]{name} {message}{c}".format(
+        print ("[{icon}]{name} {message}".format(
             icon=f"{t.yellow}{icon}{t.normal}",
             name= f" {self.color}{self.name}{t.normal}:" \
                     if self.name is not "" else "",
-            message=message,
-            c=t.normal))
+            message=f"{msg_color}{message}{t.normal}"))
