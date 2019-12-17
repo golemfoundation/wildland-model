@@ -31,6 +31,7 @@ RUN apt-get install -qqy \
     python3-networkx \
     python3-pygraphviz \
     python3-matplotlib \
+    python3-blessings python3-colorama python3-pypdf2\
     dot2tex \
     > /dev/null
 
