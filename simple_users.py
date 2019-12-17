@@ -7,10 +7,6 @@ from wildland.storage import BackendStorage
 from wildland.reporting import prep_output_dir, dump_state
 from wildland.cli import WildlandClient
 
-from wildland.resolve import wl_resolve, \
-    wl_set_default_directory, \
-    fetch_container
-
 from bootstrap_golem import golem_foundation_init, \
     golem_foundation_dir_submit_key, \
     golem_foundation_dir_key
@@ -68,7 +64,7 @@ wlm_actor_gf = golem_foundation_dir_key()
 
 cli_tichy = WildlandClient (
     wlm_actor_me = wlm_actor_tichy,
-    wlm_actor_default_dir = wlm_actor_gf)
+    wlm_actor_default_dir = wlm_actor_tichy)
 
 cli_tichy.map_container (wlm_actor_tichy)
 cli_tichy.map_container (wlm_actor_gf)
@@ -113,12 +109,11 @@ dump_state(clients=all_clients)
 
 cli_tichy.map_container (wlm_actor_tarantoga)
 dump_state(clients=all_clients)
-wl_set_default_directory (wlm_actor_tichy)
-wl_resolve ("/users/names/Ijon Tichy:/trips/14th/kurdle")
+cli_tichy.resolve ("/users/names/Ijon Tichy:/trips/14th/kurdle")
 dump_state(clients=all_clients)
 
-wl_set_default_directory (golem_foundation_dir_key())
-c = wl_resolve(
+cli_tichy.set_default_directory(golem_foundation_dir_key())
+c = cli_tichy.resolve(
     "/wildland/community/users/Ijon Tichy:"\
     "/trips/14th/kurdle")
-fetch_container (c)
+cli_tichy.fetch (c)

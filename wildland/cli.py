@@ -4,7 +4,9 @@ from wildland.core import WildlandManifest, \
     WildlandStorageManifest
 from . logger import Logger
 from . reporting import dump_yaml_for_node
+from . resolve import wl_resolve_single, wl_resolve_recursively
 import os
+from blessings import Terminal
 
 class WildlandClient:
     """An instance of a Wildland client."""
@@ -13,10 +15,15 @@ class WildlandClient:
         self.me = wlm_actor_me
         self.dir = wlm_actor_default_dir
         self.containers = []
-        self.logger = Logger (name=wlm_actor_me.id)
+        self.logger = Logger (name=self, color=Terminal().magenta)
+        self.logger.log (f"New client instance for {self.me}, default dir: {self.dir}")
     
     def __repr__ (self):
         return f"cli_{self.me.id:.8}"
+    
+    def set_default_directory (self, wlm_actor_default_dir):
+        self.logger.log (f"Updating default dir to: {self.dir}")
+        self.dir = wlm_actor_default_dir
     
     def map_container (self, wlm_c):
         self.containers.append (wlm_c)
@@ -44,7 +51,7 @@ class WildlandClient:
         
     def dump (self, basedir):
         basedir = os.path.normpath (basedir)
-        self.logger.log (f"Forest created in {basedir}")
+        # self.logger.log (f"Forest created in {basedir}")
         for c in self.containers:
             
             owner = None
@@ -80,3 +87,12 @@ class WildlandClient:
             target=f"{self.dir.id}"
         )
         
+    def resolve (self, path):
+        return wl_resolve_recursively (self.dir, path, logger=self.logger)
+
+    def fetch (self, wlm_c):
+        wlm_storages = wlm_c.get_storage_manifests ()
+        self.logger.log (f"fetch_container: {wlm_c}, requesting from all backends:")
+        for s in wlm_storages:
+            # TODO: properly encode path
+            s.request_content (wlm_c.paths[0])
