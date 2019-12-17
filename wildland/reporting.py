@@ -130,7 +130,7 @@ def dump_yamls(G, dirpath):
             dump_yaml_for_node (filepath, n)
     g_logger.nest_down()
 
-def dump_state(description="state dump"):
+def dump_state(description="state dump", clients=[]):
     if 'iter' not in dump_state.__dict__:
         dump_state.iter = 0
 
@@ -148,4 +148,8 @@ def dump_state(description="state dump"):
         if type == EdgeType.owned_by:
             storage_graph.remove_edge(u,v)
     check_and_report_cycles (storage_graph)
+
+    for cli in clients:
+        filepath = f"{outdir}/cli-{dump_state.iter}-{cli.me}"    
+        cli.dump (filepath)
     dump_state.iter += 1
