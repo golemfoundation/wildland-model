@@ -115,7 +115,10 @@ def prep_output_dir ():
     g_logger.log (f"Preparing output dir for this run: {outdir}")
     os.mkdir (outdir)
     last_symlink=f"{basedir}/@last"
-    os.unlink (last_symlink)
+    try:
+        os.unlink (last_symlink)
+    except FileNotFoundError:
+        pass
     os.symlink (src=os.path.relpath(outdir, start=basedir),
                 dst=last_symlink)
 
