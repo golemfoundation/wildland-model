@@ -28,8 +28,6 @@ class BackendStorage (yaml.YAMLObject):
         self.storage = {}
 
         g_wlgraph.add_edge (self, self.drv, type=EdgeType.provided_by)
-        # A node respresenting mounted fs tree (not a Container)
-        self.ns = NameSpace (self, g_wlgraph)
         self.logger = Logger (self, color=Terminal().green)
         self.logger.log (f"creating storage {type} backend {friendly_name}")
 
