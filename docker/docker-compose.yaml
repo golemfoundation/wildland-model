@@ -7,4 +7,4 @@ services:
     image: wildland-model
     volumes:
       - ..:/wildland:ro
-      - ../output:/wildland/output:rw
+      - ~/wildland/output:/wildland/output:rw
