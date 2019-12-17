@@ -110,9 +110,14 @@ def prep_output_dir ():
     now = datetime.now()
     timestamp = f"{now.year}-{now.month:02}-{now.day:02}-{now.hour:02}{now.minute:02}{now.second:02}"
     global outdir
-    outdir = f"./output/run-{timestamp}-{os.path.basename(sys.argv[0])}"
+    basedir="./output"
+    outdir = f"{basedir}/run-{timestamp}-{os.path.basename(sys.argv[0])}"
     g_logger.log (f"Preparing output dir for this run: {outdir}")
     os.mkdir (outdir)
+    last_symlink=f"{basedir}/@last"
+    os.unlink (last_symlink)
+    os.symlink (src=os.path.relpath(outdir, start=basedir),
+                dst=last_symlink)
 
 def dump_yaml_for_node (filepath, n):
     # g_logger.log (f"dumping yaml for node {n}")
