@@ -63,6 +63,13 @@ class WildlandClient:
             # TODO: replce with proper content object
             dump_yaml_for_node (
                 f"{container_path}/.wlmanifest.yaml", c)
+
+            # Dump storage manifests assigned to this container:
+            os.makedirs (f"{container_path}/.wlinfra/")
+            for wlm_storage in c.storage_manifests:
+                dump_yaml_for_node (
+                    f"{container_path}/.wlinfra/{wlm_storage}.yaml",
+                    wlm_storage)
             
             for content in c.content:
                 f = open (f"{container_path}/{content.path}", 'w')
