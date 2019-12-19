@@ -155,5 +155,5 @@ def dump_state(description="state dump", clients=[]):
     for cli in clients:
         g_logger.log (f"- creating forrest for {cli.me}", msg_color=Terminal().dim)
         filepath = f"{stepdir}/forest-{cli.me}"    
-        cli.dump (filepath)
+        cli.create_forest (filepath)
     dump_state.iter += 1

@@ -28,63 +28,60 @@ class WildlandClient:
     def map_container (self, wlm_c):
         self.containers.append (wlm_c)
         
-    def create_rel_symlink (self, basedir, symlink, target):
-        basedir = os.path.normpath(basedir)
+    def create_rel_symlink (self, symlink, target):
         symlink = os.path.normpath(symlink)
         target  = os.path.normpath(target)
-        symlink_full = f"{basedir}/{symlink}"
-        target_full = f"{basedir}/{target}"
-        symlink_parent_dir, symlink_base = os.path.split (symlink_full)
-        target_rel = os.path.relpath(target_full, start=symlink_parent_dir)
+        symlink_parent_dir, symlink_base = os.path.split (symlink)
+        target_rel = os.path.relpath(target, start=symlink_parent_dir)
         
-        ret = False
-        if not os.path.exists (target_full):
-            ret = True
         try:
             os.makedirs (symlink_parent_dir)
-            os.makedirs (target_full)
+            os.makedirs (target)
         except FileExistsError:
             pass
-
-        os.symlink (src=target_rel, dst=symlink_full)
-        return ret # True if this was 1st call for this container
-        
-    def dump (self, basedir):
-        basedir = os.path.normpath (basedir)
-        # self.logger.log (f"Forest created in {basedir}")
-        for c in self.containers:
             
-            owner = None
-            if isinstance (c, WildlandUserManifest):
-                owner = c.id
-                container_path = f"{owner}/.uuid/{c.uuid:.8}"
-                self.create_rel_symlink (
-                    basedir=basedir,
-                    symlink=f"{container_path}/root",
-                    target=f"{owner}/"
-                )
-                dump_yaml_for_node (
-                    f"{basedir}/{container_path}/manifest.yaml", c)
-            else:
-                owner = c.wlm_actor_admin.id
+        os.symlink (src=target_rel, dst=symlink)
 
+    def create_forest (self, basedir):
+        basedir = os.path.normpath (basedir)
+
+        for c in self.containers:
+            owner = c.id if isinstance (c, WildlandUserManifest) \
+                else c.wlm_actor_admin.id
+            owner_forest_dir = f"{basedir}/{owner}/"
+            container_path = f"{owner_forest_dir}/.uuid/{c.uuid:.8}"
+            
+            os.makedirs (container_path)
+            
+            if isinstance (c, WildlandUserManifest):
+                # Create special metafiles for user manifest containers:
+                self.create_rel_symlink (
+                    symlink=f"{container_path}/root",
+                    target=f"../.."
+                )
+            
+            # TODO: replce with proper content object
+            dump_yaml_for_node (
+                f"{container_path}/.wlmanifest.yaml", c)
+            
+            for content in c.content:
+                f = open (f"{container_path}/{content.path}", 'w')
+                f.close()
+            
             for p in c.paths:
                 self.create_rel_symlink (
-                    basedir=f"{basedir}/{owner}",
-                    symlink=f"{p.lstrip('/')}",
-                    target=f".uuid/{c.uuid:.8}/"
+                    symlink=f"{owner_forest_dir}/{p.lstrip('/')}",
+                    target=container_path
                 )
-        
+
         self.create_rel_symlink (
-            basedir=basedir,
-            symlink="@me",
-            target=f"{self.me.id}"
+            symlink=f"{basedir}/@me",
+            target=f"{basedir}/{self.me.id}"
         )
 
         self.create_rel_symlink (
-            basedir=basedir,
-            symlink="@default",
-            target=f"{self.dir.id}"
+            symlink=f"{basedir}/@default",
+            target=f"{basedir}/{self.dir.id}"
         )
         
     def resolve (self, path):
