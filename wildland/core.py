@@ -13,7 +13,7 @@ from . globals import *
 class WildlandManifest (yaml.YAMLObject):
     """A basis for a Wildland container."""
 
-    def __init__ (self, wlm_actor_admin=None, content_urls=[], paths=[]):
+    def __init__ (self, wlm_actor_admin=None, content=[], paths=[]):
 
         # uuid is ephemeral and client isinstance-specific
         # We use it here mostly for easing visualization
@@ -36,8 +36,8 @@ class WildlandManifest (yaml.YAMLObject):
 
         self.storage_manifests = []
         self.content = []
-        for content_url in content_urls:
-            self.add_content (content_url)
+        for c in content:
+            self.add_content (c)
 
     yaml_tag = u'!wlm'
     @classmethod
@@ -45,7 +45,7 @@ class WildlandManifest (yaml.YAMLObject):
         dict_representation = {
             'uuid': wlm.uuid,
             'paths': wlm.paths,
-            'content': wlm.content,
+            'content': repr(wlm.content),
             'storage_manifests': repr(wlm.storage_manifests),
             'original_wlm' : wlm.original_wlm
         }
@@ -63,8 +63,8 @@ class WildlandManifest (yaml.YAMLObject):
         g_wlgraph.add_edge (last_node, self)
         self.paths.append (path)
 
-    def add_content (self, url):
-        self.content.append (str(url))
+    def add_content (self, c):
+        self.content.append (c)
         self.store_content()
         
     def get_storage_manifests (self):
