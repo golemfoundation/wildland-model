@@ -6,6 +6,7 @@ from wildland.core import WildlandManifest, \
 from wildland.storage import BackendStorage
 from wildland.reporting import prep_output_dir, dump_state
 from wildland.cli import WildlandClient
+from wildland.content import *
 
 from bootstrap_golem import golem_foundation_init, \
     golem_foundation_dir_submit_key, \
@@ -83,14 +84,20 @@ dump_state(clients=all_clients)
 
 some_containers = [
     WildlandManifest(wlm_actor_tichy,
-        content_urls = ["file://~/Photos/2123-12-01/"],
+        content = [
+            ContainerContentFile(f"IMG{i:03}.jpeg") for i in range (1,10)
+            ],
         paths = [
             "/photos/nature/animals/kurdle",
             "/trips/14th/kurdle",
             "/plantes/Entropy/photos/kurdle"
             ]),
     WildlandManifest(wlm_actor_tichy,
-        content_urls = ["file://~/Journal/TimeLapses/"],
+        content = [
+            ContainerContentFile("journal-mon.md"),
+            ContainerContentFile("journal-tue.md"),
+            ContainerContentFile("timelapse01.mov")
+            ],
         paths = [
             "/trips/7th/journal",
             "/journal/trip7th",
