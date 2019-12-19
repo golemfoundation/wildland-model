@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 from wildland.core import WildlandManifest, \
-    WildlandUserManifest, \
-    WildlandStorageManifest
+                          WildlandUserManifest, \
+                          WildlandStorageManifest
 from wildland.storage import BackendStorage
 from wildland.reporting import prep_output_dir, dump_state
 from wildland.cli import WildlandClient
@@ -11,7 +11,6 @@ from wildland.content import *
 from bootstrap_golem import golem_foundation_init, \
     golem_foundation_dir_submit_key, \
     golem_foundation_dir_key
-
 
 # User-specific config, building on Golem Foundation default infrastructure
 prep_output_dir()
@@ -63,7 +62,6 @@ dump_state()
 
 wlm_actor_gf = golem_foundation_dir_key()
 
-
 cli_tichy = WildlandClient (
     wlm_actor_me = wlm_actor_tichy,
     wlm_actor_default_dir = wlm_actor_tichy)
@@ -108,6 +106,7 @@ some_containers = [
 
 dump_state()
 
+# Assign storage infrastructure for containers:
 for c in some_containers:
     cli_tichy.map_container (c)
     c.add_storage_manifest (WildlandStorageManifest(storage_ipfs))

@@ -1,11 +1,11 @@
-
-from wildland.core import WildlandManifest, \
-    WildlandUserManifest, \
-    WildlandStorageManifest
+from . core import WildlandManifest, \
+                   WildlandUserManifest, \
+                   WildlandStorageManifest
 from . logger import Logger
 from . reporting import dump_yaml_for_node
 from . resolve import wl_resolve_single, wl_resolve_recursively
 from . content import *
+
 import os
 from blessings import Terminal
 

@@ -6,9 +6,9 @@ from . storage import BackendStorage, BackendStorageWildland, StorageDriver
 from . logger import Logger
 from . ids import gen_uuid
 from . resolve import verify_path, split_path_into_tokens
+from . globals import *
 import hashlib
 import yaml
-from . globals import *
 
 class WildlandManifest (yaml.YAMLObject):
     """A basis for a Wildland container."""
@@ -88,7 +88,7 @@ class WildlandManifest (yaml.YAMLObject):
                 s.store_manifest(path=path, object=self)
     
     def store_content (self):
-        self.logger.log (f"store_content(): c={self.content}, s={self.storage_manifests}")
+        # self.logger.log (f"store_content(): c={self.content}, s={self.storage_manifests}")
         for c in self.content:
             for s in self.storage_manifests:
                 for path in self.paths:

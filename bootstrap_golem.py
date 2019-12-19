@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 from wildland.core import WildlandManifest, \
-    WildlandUserManifest, \
-    WildlandStorageManifest
+                          WildlandUserManifest, \
+                          WildlandStorageManifest
 from wildland.storage import BackendStorage
 from wildland.reporting import prep_output_dir, dump_state
 from bootstrap_bare import wl_barebones_init
