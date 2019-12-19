@@ -73,6 +73,7 @@ class WildlandManifest (yaml.YAMLObject):
     def add_storage_manifest (self, wlm_storage):
         if not isinstance (wlm_storage, WildlandStorageManifest):
             raise ValueError ("Need a WildlandStorageManifest object!")
+        wlm_storage.container = self
         self.storage_manifests.append(wlm_storage)
         g_wlgraph.add_edge (self, wlm_storage, type=EdgeType.assigned)
         wlm_storage.update_admin (self.wlm_actor_admin)
@@ -159,6 +160,7 @@ class WildlandStorageManifest (WildlandManifest):
     def to_yaml(cls, dumper, wlm):
         dict_representation = {
             'uuid': wlm.uuid,
+            'container': repr(wlm.container),
             'backend' : repr (wlm.bknd_storage_backend)
         }
         node = dumper.represent_mapping(u'!wlm_storage', dict_representation)
