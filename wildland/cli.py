@@ -5,6 +5,7 @@ from wildland.core import WildlandManifest, \
 from . logger import Logger
 from . reporting import dump_yaml_for_node
 from . resolve import wl_resolve_single, wl_resolve_recursively
+from . content import *
 import os
 from blessings import Terminal
 
@@ -42,6 +43,22 @@ class WildlandClient:
             
         os.symlink (src=target_rel, dst=symlink)
 
+    def create_container_content (self, container_path, wlm, delegated=False):
+        for content in wlm.content:
+            if isinstance (content, ContainerContentFile):
+                f = open (f"{container_path}/"
+                          f"{'@' if delegated else ''}"
+                          f"{content.path}", 'w')
+                f.close()
+            elif isinstance (content, ContainerContentWLC):
+                self.create_container_content (
+                    container_path=container_path,
+                    wlm=content.wlm,
+                    delegated=True)
+            else:
+                raise AssertionError        
+        
+        
     def create_forest (self, basedir):
         basedir = os.path.normpath (basedir)
 
@@ -71,10 +88,10 @@ class WildlandClient:
                     f"{container_path}/.wlinfra/{wlm_storage}.yaml",
                     wlm_storage)
             
-            for content in c.content:
-                f = open (f"{container_path}/{content.path}", 'w')
-                f.close()
-            
+            self.create_container_content (
+                container_path=container_path,
+                wlm=c)
+
             for p in c.paths:
                 self.create_rel_symlink (
                     symlink=f"{owner_forest_dir}/{p.lstrip('/')}",
@@ -100,3 +117,23 @@ class WildlandClient:
         for s in wlm_storages:
             # TODO: properly encode path
             s.request_content (wlm_c.paths[0])
+
+    def clone (self, wlm_remote_c, paths=[]):
+        self.map_container (wlm_remote_c)
+        if len(paths) == 0:
+            paths = [f"/cloned/{wlm_remote_c.wlm_actor_admin.id}/{p}" for p in wlm_remote_c.paths]
+            
+        wlm_cloned_c = WildlandManifest (
+            wlm_actor_admin=self.me,
+            paths=paths,
+            content= [
+                ContainerContentWLC (
+                    path="", # map remote WLC to root dir of this container
+                    wlm=wlm_remote_c,
+                    wl_address=f"@me:{wlm_remote_c.wlm_actor_admin}/"
+                               f"{wlm_remote_c.paths[0]}" # use any path
+                )]
+            )
+        
+        self.map_container (wlm_cloned_c)
+        return wlm_cloned_c

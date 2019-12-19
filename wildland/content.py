@@ -46,8 +46,8 @@ class ContainerContentWLC(ContainerContentItem):
         root dir of the current container. Having more than one such item might give undesireable results, clients software should avoid this.
     """
     
-    def __init__(self, path, wl_address):
-        self.path = path
+    def __init__(self, path, wlm, wl_address):
+        self.wlm = wlm
         self.wl_address = wl_address
         super().__init__(path=path)
 
