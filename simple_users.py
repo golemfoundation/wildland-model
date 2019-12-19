@@ -55,7 +55,8 @@ wlm_storage_tarantoga = WildlandStorageManifest(
 wlm_actor_tarantoga = WildlandUserManifest (
     wlm_storage_directory = wlm_storage_tarantoga,
     paths = ["/users/names/Prof. Tarantoga"])
-
+    
+golem_foundation_dir_submit_key (wlm_actor_tarantoga)
 dump_state()
 
 # Create client instances representing view's of different actors:
@@ -124,3 +125,10 @@ c = cli_tichy.resolve(
     "/wildland/community/users/Ijon Tichy:"\
     "/trips/14th/kurdle")
 cli_tichy.fetch (c)
+
+# Clone a container from another user and map into own namespace:
+cli_tarantoga.set_default_directory(golem_foundation_dir_key())
+wlm_ijons_stuff = cli_tarantoga.resolve(
+                "/wildland/community/users/Ijon Tichy:/trips/14th/kurdle")
+cli_tarantoga.clone (wlm_ijons_stuff, paths=["/tichy's trips/kurdle"])
+dump_state(clients=all_clients)
