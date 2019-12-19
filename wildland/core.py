@@ -45,8 +45,8 @@ class WildlandManifest (yaml.YAMLObject):
         dict_representation = {
             'uuid': wlm.uuid,
             'paths': wlm.paths,
-            'content': repr(wlm.content),
             'storage_manifests': repr(wlm.storage_manifests),
+            'content': wlm.content,
             'original_wlm' : wlm.original_wlm
         }
         node = dumper.represent_mapping(u'!wlm', dict_representation)
