@@ -123,7 +123,7 @@ def dump_yaml_for_node (filepath, n):
     # g_logger.log (f"dumping yaml for node {n}")
 
     with open (filepath, "w") as stream:
-        yaml.dump (n, stream)
+        yaml.dump (n, stream, default_flow_style=False)
 
 def dump_yamls(G, dirpath):
     g_logger.log (f"- dumping yamls to {dirpath}", msg_color=Terminal().dim)

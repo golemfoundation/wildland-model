@@ -159,7 +159,6 @@ class WildlandStorageManifest (WildlandManifest):
     def to_yaml(cls, dumper, wlm):
         dict_representation = {
             'uuid': wlm.uuid,
-            'paths': [],
             'backend' : repr (wlm.bknd_storage_backend)
         }
         node = dumper.represent_mapping(u'!wlm_storage', dict_representation)
