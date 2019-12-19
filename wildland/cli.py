@@ -53,12 +53,12 @@ class WildlandClient:
             
             os.makedirs (container_path)
             
-            if isinstance (c, WildlandUserManifest):
-                # Create special metafiles for user manifest containers:
-                self.create_rel_symlink (
-                    symlink=f"{container_path}/root",
-                    target=f"../.."
-                )
+            # if isinstance (c, WildlandUserManifest):
+            #     # Create special metafiles for user manifest containers:
+            #     self.create_rel_symlink (
+            #         symlink=f"{container_path}/root",
+            #         target=f"../.."
+            #     )
             
             # TODO: replce with proper content object
             dump_yaml_for_node (
