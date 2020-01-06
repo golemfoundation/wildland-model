@@ -109,6 +109,8 @@ dump_state()
 # Assign storage infrastructure for containers:
 for c in some_containers:
     cli_tichy.map_container (c)
+    # When we have economy we could do just:
+    # c.find_storeage(available_storge_backends)
     c.add_storage_manifest (WildlandStorageManifest(storage_ipfs))
     c.add_storage_manifest (WildlandStorageManifest(storage_mynas))
     c.add_storage_manifest (WildlandStorageManifest(storage_mys3))

@@ -18,7 +18,7 @@ class WildlandManifest (yaml.YAMLObject):
         # uuid is ephemeral and client isinstance-specific
         # We use it here mostly for easing visualization
         self.uuid = gen_uuid()
-        self.original_wlm = None
+        # self.original_wlm = None
 
         if wlm_actor_admin is None:
             self.id = self.uuid # TODO
@@ -47,7 +47,7 @@ class WildlandManifest (yaml.YAMLObject):
             'paths': wlm.paths,
             'storage_manifests': repr(wlm.storage_manifests),
             'content': wlm.content,
-            'original_wlm' : wlm.original_wlm
+            # 'original_wlm' : wlm.original_wlm
         }
         node = dumper.represent_mapping(u'!wlm', dict_representation)
         return node
