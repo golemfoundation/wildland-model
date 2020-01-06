@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -qqy update
+RUN apt-get update -qqy
 
 # disable exclusion of man pages
 RUN sed -i '/path-exclude=\/usr\/share\/man\/*/c\#path-exclude=\/usr\/share\/man\/*' /etc/dpkg/dpkg.cfg.d/excludes
