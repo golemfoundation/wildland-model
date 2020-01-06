@@ -130,8 +130,8 @@ class WildlandClient:
                 ContainerContentWLC (
                     path="", # map remote WLC to root dir of this container
                     wlm=wlm_remote_c,
-                    wl_address=f"@me:{wlm_remote_c.wlm_actor_admin}/"
-                               f"{wlm_remote_c.paths[0]}" # use any path
+                    wl_address=f"@me:{wlm_remote_c.wlm_actor_admin.id}/"
+                               f"{wlm_remote_c.paths[0].lstrip('/')}" # use any path
                 )]
             )
         
