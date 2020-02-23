@@ -55,7 +55,7 @@ class BackendStorage (yaml.YAMLObject):
                 f"{Terminal().normal}"
                 f" {object} as: "              
                 f"{Terminal().yellow}{path}{Terminal().normal}")
-            self.storage[path] = object
+        self.storage[path] = object
     
     def request_object (self, path):
         self.logger.log (f"request for object: "              
