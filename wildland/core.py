@@ -44,8 +44,7 @@ class WildlandManifest (yaml.YAMLObject):
     def to_yaml(cls, dumper, wlm):
         dict_representation = {
             'signer': wlm.wlm_actor_admin.id,
-            'uuid': wlm.uuid,
-            'paths': wlm.paths,
+            'paths': wlm.paths + ['/uuid/' + wlm.uuid],
             'backends': {
                 'storage': [url for manifest in wlm.storage_manifests for url in manifest.urls],
             },
@@ -131,10 +130,9 @@ class WildlandUserManifest (WildlandManifest):
     @classmethod
     def to_yaml(cls, dumper, wlm):
         dict_representation = {
-            'uuid': wlm.uuid,
             'signer': wlm.id,
             'pubkey': wlm.pubkeys,
-            'paths': wlm.paths,
+            'paths': wlm.paths + ['/uuid/' + wlm.uuid] ,
             'storage': [url for manifest in wlm.storage_manifests for url in manifest.urls],
         }
         node = dumper.represent_mapping(u'!wlm_actor', dict_representation)
@@ -170,7 +168,7 @@ class WildlandStorageManifest (WildlandManifest):
     @classmethod
     def to_yaml(cls, dumper, wlm):
         dict_representation = {
-            'uuid': wlm.uuid,
+            'paths': [f'/uuid/{wlm.container.uuid}/storage_{wlm.uuid}'],
             'container': repr(wlm.container),
             'backend': repr(wlm.bknd_storage_backend)
         }
