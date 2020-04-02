@@ -43,6 +43,7 @@ class WildlandManifest (yaml.YAMLObject):
     @classmethod
     def to_yaml(cls, dumper, wlm):
         dict_representation = {
+            'signer': wlm.wlm_actor_admin.id,
             'uuid': wlm.uuid,
             'paths': wlm.paths,
             'backends': {
@@ -130,6 +131,7 @@ class WildlandUserManifest (WildlandManifest):
     def to_yaml(cls, dumper, wlm):
         dict_representation = {
             'uuid': wlm.uuid,
+            'signer': wlm.id,
             'pubkey': wlm.id,
             'paths': wlm.paths,
             'storage': [url for manifest in wlm.storage_manifests for url in manifest.urls],
