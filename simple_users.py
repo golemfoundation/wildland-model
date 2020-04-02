@@ -37,6 +37,9 @@ wlm_actor_tichy = WildlandUserManifest (
     paths = ["/users/names/Ijon Tichy",
              "/users/emails/ijon@lunar.extraction.module"])
 
+# 3. Add another Tichy's key to the manifest
+wlm_actor_tichy.add_pubkey('0x490ae7ff')
+
 dump_state()
 
 # Publish user manifest to the golem foundation directory

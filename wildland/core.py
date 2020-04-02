@@ -113,6 +113,7 @@ class WildlandUserManifest (WildlandManifest):
 
         self.paths = paths
         self.id = self.gen_pubkey()
+        self.pubkeys = [self.id]
         self.logger = Logger (self)
         self.original_storage_manifests = None
         self.urls = urls or ['internal://{!r}.yaml'.format(self)]
@@ -132,7 +133,7 @@ class WildlandUserManifest (WildlandManifest):
         dict_representation = {
             'uuid': wlm.uuid,
             'signer': wlm.id,
-            'pubkey': wlm.id,
+            'pubkey': wlm.pubkeys,
             'paths': wlm.paths,
             'storage': [url for manifest in wlm.storage_manifests for url in manifest.urls],
         }
@@ -146,6 +147,9 @@ class WildlandUserManifest (WildlandManifest):
         # We would like the "pubkey hash" to persist accorss runs
         # to allow for more complex experiments :)
         return f"0x{hashlib.sha256(self.paths[0].encode()).hexdigest()[:8]}"
+
+    def add_pubkey(self, pubkey):
+        self.pubkeys.append(pubkey)
 
 class WildlandStorageManifest (WildlandManifest):
     """A manifest assigned to a container, which tells where it is to be stored.
