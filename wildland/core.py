@@ -143,7 +143,7 @@ class WildlandUserManifest (WildlandManifest):
     def gen_pubkey (self):
         # We would like the "pubkey hash" to persist accorss runs
         # to allow for more complex experiments :)
-        return f"0x{hashlib.sha256(self.paths[0].encode()).hexdigest()[1:8]}"
+        return f"0x{hashlib.sha256(self.paths[0].encode()).hexdigest()[:8]}"
 
 class WildlandStorageManifest (WildlandManifest):
     """A manifest assigned to a container, which tells where it is to be stored.
