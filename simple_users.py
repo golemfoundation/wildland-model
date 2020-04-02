@@ -112,7 +112,10 @@ for c in some_containers:
     # When we have economy we could do just:
     # c.find_storeage(available_storge_backends)
     c.add_storage_manifest (WildlandStorageManifest(storage_ipfs))
-    c.add_storage_manifest (WildlandStorageManifest(storage_mynas))
+    c.add_storage_manifest (
+        WildlandStorageManifest(storage_mynas,
+                                [f'webdav://mynas.mydomain.org/{repr(c)}-storage.yaml',
+                                 f'wildland://{c.wlm_actor_admin.id}:/storage-manifests/{repr(c)}.yaml']))
     c.add_storage_manifest (WildlandStorageManifest(storage_mys3))
 dump_state(clients=all_clients)
 

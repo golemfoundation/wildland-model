@@ -45,7 +45,9 @@ class WildlandManifest (yaml.YAMLObject):
         dict_representation = {
             'uuid': wlm.uuid,
             'paths': wlm.paths,
-            'storage_manifests': repr(wlm.storage_manifests),
+            'backends': {
+                'storage': [url for manifest in wlm.storage_manifests for url in manifest.urls],
+            },
             'content': wlm.content,
             # 'original_wlm' : wlm.original_wlm
         }
@@ -106,12 +108,13 @@ class WildlandUserManifest (WildlandManifest):
         When creating a new user, a storage manifest
     """
 
-    def __init__ (self, wlm_storage_directory, paths=[]):
+    def __init__ (self, wlm_storage_directory, paths=[], urls=None):
 
         self.paths = paths
         self.id = self.gen_pubkey()
         self.logger = Logger (self)
         self.original_storage_manifests = None
+        self.urls = urls or ['internal://{!r}.yaml'.format(self)]
 
         self.logger.log (f"creating new user: {Terminal().blue}{paths[0]}, id = {self.id}")
         assert isinstance (wlm_storage_directory, WildlandStorageManifest)
@@ -129,7 +132,7 @@ class WildlandUserManifest (WildlandManifest):
             'uuid': wlm.uuid,
             'pubkey': wlm.id,
             'paths': wlm.paths,
-            'storage_manifests': repr(wlm.storage_manifests)
+            'storage': [url for manifest in wlm.storage_manifests for url in manifest.urls],
         }
         node = dumper.represent_mapping(u'!wlm_actor', dict_representation)
         return node
@@ -146,11 +149,13 @@ class WildlandStorageManifest (WildlandManifest):
     """A manifest assigned to a container, which tells where it is to be stored.
     """
 
-    def __init__ (self, bknd_storage_backend):
+    def __init__ (self, bknd_storage_backend, urls=None):
         assert isinstance(bknd_storage_backend, BackendStorage)
         WildlandManifest.__init__ (self)
         self.bknd_storage_backend = bknd_storage_backend
+        self.urls = urls or ['internal://{!r}.yaml'.format(self)]
         self.logger.log (f"adding storage manifest ({self}):")
+        self.logger.log (f"published at {self.urls}")
         self.logger.log (f"backed on {bknd_storage_backend}")
         g_wlgraph.add_node (self)
         g_wlgraph.add_edge (self, self.bknd_storage_backend,
@@ -161,7 +166,7 @@ class WildlandStorageManifest (WildlandManifest):
         dict_representation = {
             'uuid': wlm.uuid,
             'container': repr(wlm.container),
-            'backend' : repr (wlm.bknd_storage_backend)
+            'backend': repr(wlm.bknd_storage_backend)
         }
         node = dumper.represent_mapping(u'!wlm_storage', dict_representation)
         return node
